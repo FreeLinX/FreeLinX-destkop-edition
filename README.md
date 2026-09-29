@@ -1,4 +1,4 @@
-# FreeLinX
+# FreeLinX Desktop 
 
 FreeLinX is an independent Linux distribution with a NetBSD userland, the
 musl C library and an LLVM toolchain. **Nothing in it is built by GCC or
