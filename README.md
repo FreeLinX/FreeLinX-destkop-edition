@@ -107,6 +107,8 @@ packages). Reports from real hardware are very welcome:
 
 Known limitations are listed in the [release notes](RELEASE-NOTES.md).
 
+"Developed by Denis Gulmammadov and Kanan Majidzada"
+
 ## License
 
 FreeLinX's own code is under the BSD 2-Clause license ([LICENSE](LICENSE)).
