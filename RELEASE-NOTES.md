@@ -1,3 +1,34 @@
+# FreeLinX 1.0.1
+
+A fix release for the first real-hardware reports. Thanks to everyone who
+tried 1.0 on their machines.
+
+**Download:** `freelinx-1.0.1-x86_64.iso` below. Already installed 1.0?
+`doas xpkg upgrade` brings the new Xorg and GTK and fixes up the input
+configuration; for the hot-plug part (new devices while the desktop is
+running) reinstall from the 1.0.1 ISO.
+
+## Fixed
+
+- **Mouse and touchpad.** Input devices were picked once, by name, and at
+  most two of them: many touchpads and USB mice ("USB OPTICAL MOUSE",
+  wireless receivers) never worked, and nothing plugged in later did. Xorg
+  now finds every keyboard, mouse and touchpad itself and picks up devices
+  plugged in while the desktop runs; libinput drives them, with
+  tap-to-click and two-finger scrolling on touchpads.
+- **Right-click menu** closed again as soon as the button was released.
+- **OpenGL (GLX)** looked for its drivers in a path from the build machine.
+- **GTK** looked for its compose/dead-key data in the same wrong place.
+- Several configuration directories (PAM, fonts, Mesa, Xorg) were missing
+  from the source repository, so a fresh build could lose them.
+
+## Notes
+
+- FreeLinX is 64-bit only: 32-bit CPUs (Core Duo, Celeron M, Atom N2xx)
+  cannot start it.
+
+---
+
 # FreeLinX 1.0.0 — first release
 
 FreeLinX is an independent Linux distribution with a NetBSD userland, the
