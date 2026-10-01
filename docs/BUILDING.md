@@ -2,7 +2,14 @@
 
 FreeLinX is built on a Linux host (the build machine may use any tools; what
 it produces may not contain GCC or glibc output). Clone the repositories side
-by side:
+by side (the desktop repository is checked out as `Desktop-test`, the name
+the build scripts expect):
+
+```sh
+mkdir FreeLinX && cd FreeLinX
+git clone https://github.com/FreeLinX/FreeLinX-desk Desktop-test
+for r in xpkg ports toolchain kernel src; do git clone https://github.com/FreeLinX/$r; done
+```
 
 ```
 FreeLinX/

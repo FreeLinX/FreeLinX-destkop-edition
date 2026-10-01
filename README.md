@@ -89,7 +89,7 @@ FreeLinX is built from these repositories:
 
 | Repository | Contents |
 |---|---|
-| [Desktop-test](https://github.com/FreeLinX/Desktop-test) | the desktop image: stack build, rootfs, installer, ISO |
+| [FreeLinX-desk](https://github.com/FreeLinX/FreeLinX-desk) | the desktop image: stack build, rootfs, installer, ISO |
 | [xpkg](https://github.com/FreeLinX/xpkg) | the package manager and repository tools |
 | [ports](https://github.com/FreeLinX/ports) | NetBSD userland and other ports, built with the FreeLinX toolchain |
 | [toolchain](https://github.com/FreeLinX/toolchain) | clang/LLD and the musl sysroot |
