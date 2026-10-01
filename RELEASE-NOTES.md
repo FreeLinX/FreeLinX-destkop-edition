@@ -1,3 +1,41 @@
+# FreeLinX 1.0.2 (not released yet)
+
+Graphics, video and a sweep for GNU code that the 1.0 checks could not see.
+The package repository already carries everything below: on an installed
+system `doas xpkg upgrade` brings it in.
+
+## New
+
+- **AMD graphics acceleration.** Mesa now includes radeonsi (and llvmpipe,
+  a much faster software renderer: OpenGL 4.5 instead of 1.1) on LLVM 18.
+- **Hardware video decoding (VA-API)** for Intel (intel-media-driver,
+  i965), AMD and NVIDIA (Mesa); FreeLinX Web (Firefox) and FFmpeg use it.
+  `vainfo` shows what your GPU can decode; `glxinfo` and `glxgears` are the
+  real Mesa tools now.
+- The live session runs as an ordinary user (`live`) instead of root; the
+  installer, Packages and the system tools ask for privileges with doas.
+- Kernel and firmware are packages (`linux`, `linux-firmware`): an
+  installed system can update them with xpkg.
+
+## Fixed
+
+- **No GNU code anywhere.** GNU ncurses was linked into vim, tmux, htop,
+  ncdu, pstree, less, alsamixer, nnn and the curses games, and GNU Wget was
+  in the repository. Built with clang, they carried no GCC mark, so the
+  checks passed them. Everything now uses NetBSD curses; wget is gone (use
+  `curl` or `ftp`); the `ncurses` package is an empty transitional one that
+  removes GNU ncurses on upgrade. The publish check now also recognises GNU
+  project code itself, not only GCC and glibc.
+- `grep` never matched `$` (end of line); `su`, `newgrp`, `calendar`,
+  `tset` and `xstr` rejected their arguments (`su root` printed usage), and
+  `su` was not setuid.
+- The terminal database works: one `/usr/share/terminfo.cdb` serves every
+  program; `tput`, `tset` and `tic` could not read or build it before.
+- Programs installed with xpkg into `/bin`, `/sbin` and `/lib` now survive
+  a reboot on installed systems.
+
+---
+
 # FreeLinX 1.0.1
 
 A fix release for the first real-hardware reports. Thanks to everyone who
