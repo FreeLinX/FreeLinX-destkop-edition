@@ -11,13 +11,15 @@ menu offers:
 - **Text Console** — no desktop; `flxinstall` installs from here.
 - **Rescue Shell** — a root shell.
 
-The live desktop logs in as root automatically. Nothing is written to the
-disks until you run the installer.
+The live desktop logs in automatically as the user `live` (no password;
+privileged tools ask `doas` themselves). Nothing is written to the disks
+until you run the installer, and the `live` user does not exist on the
+installed system.
 
 ## 2. Run the installer
 
-Click the installer icon in the panel (or run `flxinstall` in a terminal as
-root). It asks, in order:
+Click the installer icon in the panel (or run `doas flxinstall` in a
+terminal). It asks, in order:
 
 1. language, keyboard layout, time zone (e.g. `Asia/Baku`)
 2. host name and the **root password** (required)
@@ -26,8 +28,10 @@ root). It asks, in order:
 5. desktop or console
 6. the target disk — **everything on it is erased**
 
-The installed system boots on BIOS and UEFI machines (Limine). `/usr`, `/etc`
-and `/var` are kept on the disk; `/home` is a separate partition.
+The installed system boots on BIOS and UEFI machines (Limine). `/usr`, `/etc`,
+`/var`, `/root`, `/bin`, `/sbin` and `/lib` are kept on the disk; `/home` is a
+separate partition. The kernel and firmware update with xpkg like any other
+package (`linux`, `linux-firmware`).
 
 ## 3. First boot
 

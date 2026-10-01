@@ -51,6 +51,11 @@ tools/publish-repo.sh --upload    # and mirror it to Hugging Face
 - a `.comment` naming a GCC compiler (GCC-built objects linked in),
 - an interpreter other than musl's,
 - DT_NEEDED on glibc or GCC runtime libraries,
-- GLIBC symbol versions.
+- GLIBC symbol versions,
+- DT_NEEDED on a GNU project library (ncurses, readline, gettext, gmp,
+  libgcrypt, GnuTLS, ...),
+- GNU project code linked in statically, recognised by its fingerprints
+  (clang-built GNU code has no GCC mark).
 
-`build-image.sh` and `publish-repo.sh` both stop on any finding.
+`build-image.sh` and `publish-repo.sh` both stop on any finding;
+`publish-repo.sh` also refuses two archives of the same package.

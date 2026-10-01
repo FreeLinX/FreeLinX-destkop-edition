@@ -34,8 +34,8 @@ The live system runs from RAM: 2 GB is the minimum, 4 GB is comfortable.
 ## What you get
 
 - **Openbox desktop**: panel with launchers, window list and clock;
-  right-click menu; works on any GPU, with OpenGL acceleration on Intel and
-  NVIDIA (nouveau).
+  right-click menu; works on any GPU, with OpenGL acceleration on Intel, AMD
+  (radeonsi) and NVIDIA (nouveau), and hardware video decoding (VA-API).
 - **FreeLinX Web** (Firefox ESR 153): the full modern web, H.264/AAC video.
   NetSurf, Dillo, Links and w3m as light browsers.
 - **Graphical installer**: language, keyboard, time zone, users, WiFi, disk —
