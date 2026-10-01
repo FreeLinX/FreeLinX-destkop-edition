@@ -24,8 +24,10 @@ system `doas xpkg upgrade` brings it in.
   in the repository. Built with clang, they carried no GCC mark, so the
   checks passed them. Everything now uses NetBSD curses; wget is gone (use
   `curl` or `ftp`); the `ncurses` package is an empty transitional one that
-  removes GNU ncurses on upgrade. The publish check now also recognises GNU
-  project code itself, not only GCC and glibc.
+  removes GNU ncurses on upgrade. On an installed 1.0.x, also run
+  `doas xpkg install vim tmux htop ncdu pstree tetris` (they came with the
+  image, not as packages), or reinstall from the 1.0.2 ISO. The publish
+  check now also recognises GNU project code itself, not only GCC and glibc.
 - `grep` never matched `$` (end of line); `su`, `newgrp`, `calendar`,
   `tset` and `xstr` rejected their arguments (`su root` printed usage), and
   `su` was not setuid.
