@@ -1,40 +1,87 @@
-# FreeLinX 1.0.2 (not released yet)
+# FreeLinX 1.0.5
 
-Graphics, video and a sweep for GNU code that the 1.0 checks could not see.
-The package repository already carries everything below: on an installed
-system `doas xpkg upgrade` brings it in.
+The biggest update since 1.0: security updates across the system, AMD
+graphics and hardware video decoding, a rebuilt desktop, and a sweep for GNU
+code that the earlier checks could not see. (1.0.2 to 1.0.4 were never
+released; everything they would have carried is here.)
+
+**Download:** `freelinx-1.0.5-x86_64.iso` below (BIOS + UEFI, 527 MB; 2 GB
+RAM minimum, 4 GB recommended). Verify it with `SHA256SUMS`.
+
+**Already installed 1.0.x?** `doas xpkg upgrade` brings the new libraries,
+Firefox, Mesa, OpenSSL and the rest. Programs that came with the 1.0.x image
+rather than as packages (the window manager, ssh, the X11 programs) and the
+new kernel are best taken by reinstalling from the 1.0.5 ISO: on 1.0.x
+installs `/bin` is not kept on the disk.
+
+## Security
+
+- **Linux 6.6.157** (was 6.6.21: 136 LTS releases of fixes behind).
+- **OpenSSL 3.5.9 LTS** everywhere (3.3 was out of support), **OpenSSH
+  10.5p1**, **curl 8.22.0**, **FreeLinX Web (Firefox ESR) 153.4.0**.
+- Updated libraries: expat 2.8.5, libX11 1.8.13, libXrender 0.9.12, libpng
+  1.6.59, freetype 2.14.3, libjpeg-turbo 3.2.0, libxml2 2.13.9, SQLite
+  3.53.4.
+- **CA certificates**: Mozilla's list of 2026-09-25, now a package
+  (`ca-certificates`) so installed systems receive updates.
+- The browser launcher opened Links with **TLS certificate checking turned
+  off**; it is on.
+- w3m is the maintained version (the 2011 one was abandoned).
 
 ## New
 
-- **AMD graphics acceleration.** Mesa now includes radeonsi (and llvmpipe,
-  a much faster software renderer: OpenGL 4.5 instead of 1.1) on LLVM 18.
-- **Hardware video decoding (VA-API)** for Intel (intel-media-driver,
-  i965), AMD and NVIDIA (Mesa); FreeLinX Web (Firefox) and FFmpeg use it.
-  `vainfo` shows what your GPU can decode; `glxinfo` and `glxgears` are the
-  real Mesa tools now.
+- **AMD graphics acceleration** (radeonsi) and a much faster software
+  renderer (llvmpipe: OpenGL 4.5 instead of 1.1), on LLVM 18.
+- **Hardware video decoding (VA-API)** for Intel, AMD and NVIDIA;
+  FreeLinX Web and mpv use it. `vainfo`, `glxinfo` and `glxgears` are
+  included.
+- **The desktop programs are rebuilt** on the system's shared libraries:
+  Openbox, dwm, dmenu, st, urxvt, Xfe 2.1, Dillo 3.2, mpv 0.41, MuPDF 1.28,
+  nsxiv, xclip, the X utilities and Doom. They used to be static copies with
+  their own old libraries (which also broke dead keys and compose in them);
+  the image is 25 MB smaller for it.
 - The live session runs as an ordinary user (`live`) instead of root; the
   installer, Packages and the system tools ask for privileges with doas.
-- Kernel and firmware are packages (`linux`, `linux-firmware`): an
-  installed system can update them with xpkg.
+- Kernel and firmware are packages (`linux`, `linux-firmware`) that install
+  themselves on the boot partition.
+- License texts of every component are in `/usr/share/licenses`.
+
+## No GNU, now checked properly
+
+The 1.0 checks only looked for GCC and glibc. Built with clang, GNU code
+carried no such mark and slipped through:
+
+- GNU ncurses was linked into vim, tmux, htop, ncdu, pstree, less,
+  alsamixer, nnn and the curses games: everything uses NetBSD curses now.
+- GNU Wget was in the repository: removed (use `curl` or `ftp`).
+- `bc` was NetBSD's descendant of GNU bc: it is now Gavin Howard's bc (the
+  one FreeBSD uses).
+- The GNU ports (GRUB, gdb, readline, libgcrypt) are gone from the tree, and
+  the build no longer uses the host's GNU binutils.
+- The image and repository checks now also recognise GNU project code
+  itself. They found every case above and nothing else.
 
 ## Fixed
 
-- **No GNU code anywhere.** GNU ncurses was linked into vim, tmux, htop,
-  ncdu, pstree, less, alsamixer, nnn and the curses games, and GNU Wget was
-  in the repository. Built with clang, they carried no GCC mark, so the
-  checks passed them. Everything now uses NetBSD curses; wget is gone (use
-  `curl` or `ftp`); the `ncurses` package is an empty transitional one that
-  removes GNU ncurses on upgrade. On an installed 1.0.x, also run
-  `doas xpkg install vim tmux htop ncdu pstree tetris` (they came with the
-  image, not as packages), or reinstall from the 1.0.2 ISO. The publish
-  check now also recognises GNU project code itself, not only GCC and glibc.
-- `grep` never matched `$` (end of line); `su`, `newgrp`, `calendar`,
-  `tset` and `xstr` rejected their arguments (`su root` printed usage), and
-  `su` was not setuid.
-- The terminal database works: one `/usr/share/terminfo.cdb` serves every
-  program; `tput`, `tset` and `tic` could not read or build it before.
-- Programs installed with xpkg into `/bin`, `/sbin` and `/lib` now survive
-  a reboot on installed systems.
+- `grep` never matched `$` (end of line).
+- `su`, `newgrp`, `calendar`, `tset` and `xstr` rejected their arguments
+  (`su root` printed usage), and `su` was not setuid.
+- The terminal database works: `tput`, `tset` and `tic` could not read or
+  build one before.
+- Programs installed with xpkg into `/bin`, `/sbin` and `/lib` survive a
+  reboot on installed systems.
+- Doom finds its game data.
+
+## Removed
+
+- NetSurf (Dillo, Links, w3m and FreeLinX Web remain); upgrading replaces
+  it with Dillo.
+
+## Notes
+
+- Still unverified on real hardware: AMD acceleration and hardware video
+  decoding. Reports are welcome:
+  https://github.com/FreeLinX/FreeLinX/issues
 
 ---
 
