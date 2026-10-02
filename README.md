@@ -13,20 +13,20 @@ package manager.
 
 ## Download
 
-**[FreeLinX 1.0.5 (x86_64 ISO)](https://github.com/FreeLinX/FreeLinX/releases/latest)**
+**[FreeLinX 1.0.6 (x86_64 ISO)](https://github.com/FreeLinX/FreeLinX/releases/latest)**
 — about 500 MB, BIOS and UEFI, boots from USB or DVD. Check it against
 `SHA256SUMS` on the release page.
 
 Write it to a USB stick (this erases the stick):
 
 ```sh
-dd if=freelinx-1.0.5-x86_64.iso of=/dev/sdX bs=4M conv=fsync status=progress
+dd if=freelinx-1.0.6-x86_64.iso of=/dev/sdX bs=4M conv=fsync status=progress
 ```
 
 or try it in a virtual machine:
 
 ```sh
-qemu-system-x86_64 -enable-kvm -m 4096 -cdrom freelinx-1.0.5-x86_64.iso
+qemu-system-x86_64 -enable-kvm -m 4096 -cdrom freelinx-1.0.6-x86_64.iso
 ```
 
 The live system runs from RAM: 2 GB is the minimum, 4 GB is comfortable.

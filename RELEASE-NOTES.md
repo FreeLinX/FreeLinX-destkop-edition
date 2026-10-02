@@ -1,3 +1,47 @@
+# FreeLinX 1.0.6
+
+Upgrading without reinstalling, more security updates, and the last
+programs that were not built from source.
+
+**Download:** `freelinx-1.0.6-x86_64.iso` below (BIOS + UEFI, 432 MB).
+Verify it with `SHA256SUMS`.
+
+**Already installed 1.0.x?** Boot this ISO and run `doas flxupgrade`, then
+reboot into your system and run `doas xpkg upgrade` (details below).
+
+## New
+
+- **`flxupgrade`**: moves an installed FreeLinX (1.0.0 or later) to the
+  release on the live ISO without touching your data. It rewrites only the
+  boot partition; on the next boot the system refreshes its files from the
+  new image, keeping your settings in `/etc` and the packages you
+  installed. Tested from 1.0.1.
+- **Source mirror**: every upstream source archive FreeLinX is built from is
+  at https://huggingface.co/datasets/FreeLinX/sources with its SHA-256,
+  including the complete source of the GPL and LGPL components.
+- The ISO is 432 MB (507 MB in 1.0.5): the system image is xz-compressed.
+
+## Security
+
+- rsync 3.5.1 (3.3.0 had remotely exploitable flaws), git 2.56.0, BusyBox
+  1.38.0, dnsmasq 2.93, jq 1.8.2, iperf 3.22, tmux 3.7c, htop 3.5.3,
+  smartmontools 7.5.
+- FFmpeg's command-line tools are 7.1.5 (the separate 6.1.2 package is
+  gone).
+- i3status 2.15 (was a 2014 build of 2.8).
+
+## Fixed
+
+- The browser launcher and the boot scripts no longer write third-party
+  DNS servers into `/etc/resolv.conf`; DHCP sets it.
+- MuPDF's library is half the size (rare font sets are left out).
+- Packages that were binaries without any source are removed (`flxt`) or
+  emptied (`flx-desktop-apps`, whose menu entries pointed at programs that
+  never existed).
+- rsync is built without GNU libidn2.
+
+---
+
 # FreeLinX 1.0.5
 
 The biggest update since 1.0: security updates across the system, AMD

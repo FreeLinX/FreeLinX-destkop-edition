@@ -53,3 +53,21 @@ or open **Packages** from the panel.
 - **Graphics**: `flx.xdriver=fbdev|kms|glamor` on the kernel command line
   overrides the automatic choice.
 - **Services**: runit; `sv status /var/service/*`.
+
+## Upgrading an installed system
+
+Packages update in place: `doas xpkg upgrade`.
+
+A new release also brings a new kernel and system image. To move an
+installed FreeLinX to it, boot the new release's ISO and run
+
+```sh
+doas flxupgrade
+```
+
+It rewrites only the boot partition; `/usr`, `/etc`, `/var` and `/home`
+stay. The first boot of the installed system then refreshes the system
+files from the new image (it says so on the console and takes a minute),
+keeping your settings in `/etc` and the packages you installed. Finish with
+`doas xpkg upgrade`. (Tested from 1.0.1; 1.0.0 has the same layout.)
+
