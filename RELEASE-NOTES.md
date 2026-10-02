@@ -1,3 +1,90 @@
+# FreeLinX 1.0.7
+
+A security release with a new kernel series: Linux 6.18 LTS, newer WiFi
+hardware, update notifications, and fixes from a full review of FreeLinX's
+own code.
+
+**Download:** `freelinx-1.0.7-x86_64.iso` below (BIOS + UEFI, 444 MB).
+Verify it with `SHA256SUMS`.
+
+**Already installed?** Boot this ISO and run `doas flxupgrade`, reboot into
+your system, then run `doas xpkg upgrade`. Tested from 1.0.6.
+
+## New
+
+- **Linux 6.18.54 LTS** (was 6.6, which reaches end of life in December
+  2026), still built with the FreeLinX clang/LLD 21.1.8.
+- **More hardware**:
+  - Intel Wi-Fi 7 (BE200/BE201, `iwlmld`) and Intel Bluetooth over PCIe;
+  - MediaTek MT7925 WiFi and Bluetooth;
+  - Realtek RTW89 8922AE/8852BTE/8851BU/8852BU and RTW88 USB adapters;
+  - Intel Xe graphics (Lunar Lake, Battlemage) and Lunar Lake touchpads;
+  - Logitech Unifying/Bolt receivers;
+  - newer HDA codecs.
+- **WiFi regulatory database** (wireless-regdb 2026.09.03). Earlier
+  releases fell back to the restrictive world domain: fewer 5 GHz channels
+  and lower transmit power.
+- **Update notifications**: an installed system checks the package
+  repository every six hours. The panel shows "N updates" when newer
+  packages exist; click it to open *Packages*. Nothing is installed
+  automatically. To turn the check off: `doas touch /etc/flx-no-update-check`.
+- **xpkg 1.0.1** (details under Security).
+
+## Security
+
+- **Partitions pinned by UUID.** Previously any attached disk labelled
+  `FLX_SYS` or `FLX_HOME` (a USB stick, for example) could be mounted as the
+  system or as `/home`. The installer and `flxupgrade` now record the
+  system's own partitions in `/etc/flx-disk`, and only those are used. The
+  live system never takes `/home` from an attached disk. `/home` is mounted
+  `nosuid,nodev`.
+- **doas**: the network and package tools no longer pass the caller's whole
+  environment (`LD_PRELOAD`, `GTK_MODULES`, ...) to a password-less root
+  process; only the display variables go through.
+- **Kernel hardening**: protected symlinks, hardlinks, regular files and
+  FIFOs in shared directories; Yama ptrace scope 1; `dmesg` and kernel
+  pointers restricted to root.
+- **Network manager**: its WiFi scan results moved out of fixed names in
+  `/tmp`, which another user could have pointed at any file.
+- **xpkg 1.0.1**:
+  - a package archive can no longer write outside its extraction
+    directory through a symlink it planted;
+  - fixed an out-of-bounds read in pax header parsing;
+  - a system with no trusted key now refuses repositories instead of
+    skipping the signature check;
+  - downloads are capped at the size the signed index lists;
+  - fixed a `/var/cache` that was created unreadable;
+  - 49 end-to-end tests, now also run by CI.
+- **Installer**:
+  - passwords no longer appear on command lines (visible in `ps`);
+  - the GUI installer's settings file is private;
+  - SSIDs and WiFi passwords with quotes or backslashes are written
+    correctly;
+  - a full name containing `:` can no longer corrupt `/etc/passwd`;
+  - a user name can no longer take over an existing account or group;
+  - capital letters in user names are lowercased instead of becoming `_`.
+- **`flxadduser`** writes the shadow entry, no longer adds users to the
+  `disk` group (raw disk access) and keeps group lists well formed.
+
+## Fixes
+
+- xclock, xcalc and xmag find their X resources again. They were installed
+  under the build machine's path. The xcalc, xclock, x11-apps and
+  xf86-input-libinput packages are rebuilt, and packaging now refuses such
+  paths.
+- The firmware build ships the newest usable iwlwifi firmware (API 100).
+
+## Known limitations
+
+- Mesa is still 24.0. Current Mesa needs an OpenCL C toolchain (libclc,
+  SPIRV-LLVM-Translator) for Intel's drivers, which FreeLinX does not build
+  yet.
+- Tested in QEMU only. Reports from real hardware are welcome.
+- No Secure Boot: disable it in the firmware settings.
+- The WiFi password reaches `wpa_cli` on its command line during a connect.
+
+---
+
 # FreeLinX 1.0.6
 
 Upgrading without reinstalling, more security updates, and the last

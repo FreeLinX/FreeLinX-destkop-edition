@@ -13,20 +13,20 @@ package manager.
 
 ## Download
 
-**[FreeLinX 1.0.6 (x86_64 ISO)](https://github.com/FreeLinX/FreeLinX/releases/latest)**
+**[FreeLinX 1.0.7 (x86_64 ISO)](https://github.com/FreeLinX/FreeLinX/releases/latest)**
 — about 500 MB, BIOS and UEFI, boots from USB or DVD. Check it against
 `SHA256SUMS` on the release page.
 
 Write it to a USB stick (this erases the stick):
 
 ```sh
-dd if=freelinx-1.0.6-x86_64.iso of=/dev/sdX bs=4M conv=fsync status=progress
+dd if=freelinx-1.0.7-x86_64.iso of=/dev/sdX bs=4M conv=fsync status=progress
 ```
 
 or try it in a virtual machine:
 
 ```sh
-qemu-system-x86_64 -enable-kvm -m 4096 -cdrom freelinx-1.0.6-x86_64.iso
+qemu-system-x86_64 -enable-kvm -m 4096 -cdrom freelinx-1.0.7-x86_64.iso
 ```
 
 The live system runs from RAM: 2 GB is the minimum, 4 GB is comfortable.
@@ -58,14 +58,14 @@ The live system runs from RAM: 2 GB is the minimum, 4 GB is comfortable.
 
 | Layer | Component |
 |---|---|
-| Kernel | Linux 6.6 LTS (6.6.157), built with clang/LLD |
+| Kernel | Linux 6.18 LTS (6.18.54), built with clang/LLD |
 | C library | musl 1.2.5 |
 | Compiler / C++ runtime | LLVM 21 (clang, LLD, libc++, libunwind) |
 | Userland | NetBSD 10.1 tools, NetBSD curses, toybox for the Linux-specific ones |
 | Init | runit + mdevd |
 | Desktop | Xorg 21.1, Mesa 24.0 + LLVM 18, GTK 3.24, Openbox, tint2 |
 | Login | greetd + tuigreet, Linux-PAM |
-| Packages | xpkg 1.0: Ed25519-signed indexes, atomic installs, SQLite database |
+| Packages | xpkg 1.0.1: Ed25519-signed indexes, atomic installs, SQLite database |
 
 ## Package manager
 

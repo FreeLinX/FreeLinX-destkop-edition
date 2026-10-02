@@ -56,7 +56,9 @@ or open **Packages** from the panel.
 
 ## Upgrading an installed system
 
-Packages update in place: `doas xpkg upgrade`.
+Packages update in place: `doas xpkg upgrade`. An installed system checks for
+updates every six hours and shows "N updates" in the panel; click it to open
+*Packages* (`doas touch /etc/flx-no-update-check` turns the check off).
 
 A new release also brings a new kernel and system image. To move an
 installed FreeLinX to it, boot the new release's ISO and run
@@ -69,5 +71,5 @@ It rewrites only the boot partition; `/usr`, `/etc`, `/var` and `/home`
 stay. The first boot of the installed system then refreshes the system
 files from the new image (it says so on the console and takes a minute),
 keeping your settings in `/etc` and the packages you installed. Finish with
-`doas xpkg upgrade`. (Tested from 1.0.1; 1.0.0 has the same layout.)
+`doas xpkg upgrade`. (Tested from 1.0.1 and 1.0.6; 1.0.0 has the same layout.)
 
