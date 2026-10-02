@@ -5,7 +5,7 @@ graphics and hardware video decoding, a rebuilt desktop, and a sweep for GNU
 code that the earlier checks could not see. (1.0.2 to 1.0.4 were never
 released; everything they would have carried is here.)
 
-**Download:** `freelinx-1.0.5-x86_64.iso` below (BIOS + UEFI, 527 MB; 2 GB
+**Download:** `freelinx-1.0.5-x86_64.iso` below (BIOS + UEFI, 507 MB; 2 GB
 RAM minimum, 4 GB recommended). Verify it with `SHA256SUMS`.
 
 **Already installed 1.0.x?** `doas xpkg upgrade` brings the new libraries,
@@ -39,7 +39,7 @@ installs `/bin` is not kept on the disk.
   Openbox, dwm, dmenu, st, urxvt, Xfe 2.1, Dillo 3.2, mpv 0.41, MuPDF 1.28,
   nsxiv, xclip, the X utilities and Doom. They used to be static copies with
   their own old libraries (which also broke dead keys and compose in them);
-  the image is 25 MB smaller for it.
+  the image is 43 MB smaller for it.
 - The live session runs as an ordinary user (`live`) instead of root; the
   installer, Packages and the system tools ask for privileges with doas.
 - Kernel and firmware are packages (`linux`, `linux-firmware`) that install
