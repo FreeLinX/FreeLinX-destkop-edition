@@ -1,0 +1,445 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FreeLinX Documentation</title>
+<meta name="description" content="FreeLinX: an independent Linux distribution with no GNU code. What it is, how it works, how to install, use and build it, and a reference of its commands.">
+<style>
+:root {
+  --bg: #ffffff; --bg-soft: #f6f7f9; --bg-code: #f2f3f5; --ink: #1b1f24; --ink-soft: #57606a;
+  --rule: #d8dde3; --accent: #c2410c; --accent-soft: #fff1e8; --link: #b33a0a; --red: #b91c1c;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111418; --bg-soft: #171b20; --bg-code: #1c2127; --ink: #e6e9ed; --ink-soft: #9aa4af;
+    --rule: #2c333b; --accent: #fb923c; --accent-soft: #2a1b12; --link: #fdba74; --red: #f87171;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111418; --bg-soft: #171b20; --bg-code: #1c2127; --ink: #e6e9ed; --ink-soft: #9aa4af;
+  --rule: #2c333b; --accent: #fb923c; --accent-soft: #2a1b12; --link: #fdba74; --red: #f87171;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.65 var(--sans); }
+a { color: var(--link); text-decoration: underline; text-underline-offset: 2px; }
+.layout { display: grid; grid-template-columns: 260px minmax(0, 1fr); max-width: 1180px; margin: 0 auto; }
+nav.side { position: sticky; top: 0; height: 100vh; overflow-y: auto; padding: 28px 20px 40px 24px; border-right: 1px solid var(--rule); font-size: 14.5px; }
+nav.side .brand { font-weight: 700; font-size: 19px; color: var(--ink); text-decoration: none; display: block; margin-bottom: 4px; }
+nav.side .brand span { color: var(--accent); }
+nav.side .ver { color: var(--ink-soft); font-size: 13px; margin-bottom: 20px; }
+nav.side ol { list-style: none; padding: 0; margin: 0; }
+nav.side li { margin: 2px 0; }
+nav.side a { color: var(--ink-soft); text-decoration: none; display: block; padding: 3px 8px; border-radius: 6px; }
+nav.side a:hover { color: var(--ink); background: var(--bg-soft); }
+nav.side .sub a { padding-left: 22px; font-size: 13.5px; }
+main { padding: 40px 48px 96px; min-width: 0; }
+h1 { font-size: 40px; line-height: 1.15; margin: 0 0 12px; letter-spacing: -0.02em; }
+h1 span { color: var(--accent); }
+.lead { font-size: 19px; color: var(--ink-soft); max-width: 720px; margin: 0 0 28px; }
+h2 { font-size: 27px; margin: 64px 0 14px; padding-top: 8px; border-top: 1px solid var(--rule); letter-spacing: -0.01em; }
+h3 { font-size: 19px; margin: 32px 0 8px; }
+h4 { font-size: 16px; margin: 22px 0 6px; font-family: var(--mono); }
+p, ul, ol { max-width: 760px; }
+li { margin: 4px 0; }
+code { font-family: var(--mono); font-size: 0.9em; background: var(--bg-code); padding: 1px 5px; border-radius: 4px; }
+pre { font-family: var(--mono); font-size: 14px; line-height: 1.5; background: var(--bg-code); border: 1px solid var(--rule); border-radius: 8px; padding: 14px 16px; overflow-x: auto; max-width: 860px; }
+pre code { background: none; padding: 0; font-size: inherit; }
+table { border-collapse: collapse; margin: 14px 0 20px; font-size: 15px; display: block; overflow-x: auto; max-width: 100%; }
+th, td { border: 1px solid var(--rule); padding: 7px 11px; text-align: left; vertical-align: top; }
+th { background: var(--bg-soft); font-weight: 600; }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin: 22px 0 8px; max-width: 860px; }
+.fact { border: 1px solid var(--rule); border-radius: 10px; padding: 14px 16px; background: var(--bg-soft); }
+.fact b { display: block; font-size: 22px; color: var(--accent); }
+.fact span { color: var(--ink-soft); font-size: 14px; }
+.note { border-left: 3px solid var(--accent); background: var(--accent-soft); padding: 10px 16px; border-radius: 0 8px 8px 0; max-width: 760px; margin: 16px 0; }
+.warn { border-left-color: var(--red); }
+.flow { display: flex; flex-wrap: wrap; align-items: stretch; gap: 0; margin: 18px 0 8px; max-width: 900px; }
+.flow .step { flex: 1 1 150px; border: 1px solid var(--rule); border-radius: 10px; padding: 12px 14px; background: var(--bg-soft); font-size: 14px; min-width: 150px; }
+.flow .step b { display: block; font-size: 14.5px; margin-bottom: 4px; }
+.flow .step.hi { border-color: var(--accent); background: var(--accent-soft); }
+.flow .arrow { align-self: center; padding: 0 8px; color: var(--ink-soft); font-size: 20px; }
+.cmd { border: 1px solid var(--rule); border-radius: 10px; padding: 4px 20px 12px; margin: 18px 0; max-width: 860px; }
+.cmd h4 { font-size: 17px; margin-top: 16px; }
+.cmd .syn { font-family: var(--mono); font-size: 14px; color: var(--ink-soft); margin: -2px 0 8px; }
+dl { margin: 8px 0; max-width: 800px; }
+dt { font-family: var(--mono); font-size: 14px; margin-top: 8px; }
+dd { margin: 2px 0 0 22px; color: var(--ink); }
+.theme { position: fixed; top: 14px; right: 16px; border: 1px solid var(--rule); background: var(--bg-soft); color: var(--ink); border-radius: 8px; padding: 5px 10px; font: 13px var(--sans); cursor: pointer; }
+footer { margin-top: 72px; color: var(--ink-soft); font-size: 14px; border-top: 1px solid var(--rule); padding-top: 18px; }
+@media (max-width: 860px) {
+  .layout { display: block; }
+  nav.side { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--rule); padding: 20px 16px; }
+  nav.side ol { columns: 2; }
+  nav.side .sub { display: none; }
+  main { padding: 28px 16px 72px; }
+  h1 { font-size: 31px; }
+  .flow .arrow { transform: rotate(90deg); width: 100%; text-align: center; padding: 2px 0; }
+  .flow .step { flex-basis: 100%; }
+}
+</style>
+</head>
+<body>
+<button class="theme" id="theme" type="button" aria-label="Switch colour theme">Theme</button>
+<div class="layout">
+<nav class="side" aria-label="Contents">
+  <a class="brand" href="#top">Free<span>LinX</span></a>
+  <div class="ver">Documentation · base 1.3.1</div>
+  <ol>
+    <li><a href="#what">What FreeLinX is</a></li>
+    <li><a href="#inside">What is inside</a></li>
+    <li><a href="#try">Trying it</a></li>
+    <li><a href="#install">Installing</a></li>
+    <li><a href="#how">How it works</a></li>
+    <li class="sub"><a href="#live">The live medium</a></li>
+    <li class="sub"><a href="#installed">The installed system</a></li>
+    <li class="sub"><a href="#services">Services and consoles</a></li>
+    <li><a href="#packages">Packages: xpkg</a></li>
+    <li><a href="#desktop">A desktop</a></li>
+    <li><a href="#using">Everyday use</a></li>
+    <li><a href="#upgrade">Upgrading</a></li>
+    <li><a href="#build">Building from source</a></li>
+    <li><a href="#tests">Tests and quality</a></li>
+    <li><a href="#reference">Command reference</a></li>
+    <li><a href="#repos">Repositories</a></li>
+    <li><a href="#status">Status and limits</a></li>
+  </ol>
+</nav>
+<main id="top">
+
+<h1>Free<span>LinX</span></h1>
+<p class="lead">An independent Linux distribution with no GNU code in it: the Linux kernel, a NetBSD userland, the musl C library, everything built with LLVM. This page explains what it is, how it works, how to install, use and build it, and what each of its own commands does.</p>
+
+<div class="facts">
+  <div class="fact"><b>0</b><span>GNU files: every release checks all 588 programs and libraries</span></div>
+  <div class="fact"><b>~60 MB</b><span>RAM used by the live system after boot</span></div>
+  <div class="fact"><b>311 MB</b><span>the ISO, for BIOS and UEFI</span></div>
+  <div class="fact"><b>428</b><span>packages in the signed repository</span></div>
+</div>
+
+<p><a href="https://github.com/FreeLinX/FreeLinX-base/releases/latest">Download the latest release</a> · <a href="https://github.com/FreeLinX">Source on GitHub</a> · Licence: BSD-2-Clause</p>
+
+<h2 id="what">What FreeLinX is</h2>
+<p>Most Linux systems are built on GNU: glibc, coreutils, bash, GCC. FreeLinX replaces all of it. The C library is <b>musl</b>, the compiler is <b>clang/LLVM</b>, the everyday commands (<code>ls</code>, <code>cp</code>, <code>sh</code>, <code>awk</code>, …) come from <b>NetBSD</b>, init is <b>runit</b>, and the package manager, the installer and the boot code are FreeLinX's own.</p>
+<p>The rule is checked, not promised. Before an image is made, <code>check-nognu.sh</code> reads every ELF file in it and refuses the build if it finds a GCC marker, a glibc interpreter or library, or GNU code linked in statically (it recognises ncurses, readline, gettext and others by their strings).</p>
+<p>There are two variants:</p>
+<ul>
+  <li><b>FreeLinX base</b>: a console system, a shell and <code>xpkg</code> for everything else. This page documents base.</li>
+  <li><b>FreeLinX desktop</b> (FreeLinX-desk): an Openbox desktop with Firefox and graphical applications, built from the same packages.</li>
+</ul>
+
+<h2 id="inside">What is inside</h2>
+<table>
+  <tr><th>Part</th><th>What FreeLinX uses</th></tr>
+  <tr><td>Kernel</td><td>Linux 6.18 LTS. Disk (virtio, NVMe, SATA, USB storage), ext4, squashfs and overlayfs drivers are built in.</td></tr>
+  <tr><td>C library</td><td>musl 1.2.5</td></tr>
+  <tr><td>Compiler toolchain</td><td>clang, LLD, compiler-rt, libc++ (LLVM)</td></tr>
+  <tr><td>Userland</td><td>NetBSD tools (<code>ls</code>, <code>sh</code>, <code>awk</code>, <code>grep</code>, <code>tar</code>, …), plus toybox for <code>getty</code>, <code>login</code>, <code>ps</code>, <code>top</code></td></tr>
+  <tr><td>Init and services</td><td>runit (<code>runsvdir</code>), mdevd for devices, FreeLinX's own <code>/init</code></td></tr>
+  <tr><td>Shells</td><td><code>mksh</code> for people (history, arrow keys, Tab), NetBSD <code>sh</code> for scripts</td></tr>
+  <tr><td>Network</td><td>dhcpcd, wpa_supplicant with <code>flxwifi</code>, OpenSSH 10.5, curl, ntpd</td></tr>
+  <tr><td>Everyday tools</td><td>vim (also <code>vi</code>), tmux, htop, nnn, git, less, <code>man</code> (mandoc, 326 pages), <code>cc</code> (tcc with musl headers), fastfetch</td></tr>
+  <tr><td>Packages</td><td><code>xpkg</code>, FreeLinX's package manager, with a signed repository of 428 packages</td></tr>
+  <tr><td>Boot loader</td><td>Limine 12.9 (BIOS and UEFI)</td></tr>
+</table>
+<p>The base image has no X11, GTK, Mesa or fonts; those are packages (see <a href="#desktop">A desktop</a>).</p>
+
+<h2 id="try">Trying it</h2>
+<h3>In QEMU</h3>
+<p>Make a virtual disk once, then boot the ISO from it. KVM makes it fast; without <code>-enable-kvm</code> everything is 10 to 20 times slower.</p>
+<pre><code>qemu-img create -f qcow2 flx.qcow2 20G        # once: this empties the disk
+qemu-system-x86_64 -enable-kvm -cpu host -m 4096 -smp 2 \
+  -drive file=flx.qcow2,if=virtio,format=qcow2 \
+  -cdrom freelinx-base-x86_64.iso -boot d \
+  -device VGA,xres=1600,yres=900 \
+  -nic user,model=virtio-net-pci</code></pre>
+<p>After <a href="#install">installing</a>, boot the disk with the same command without <code>-cdrom … -boot d</code>.</p>
+<ul>
+  <li><code>xres</code> and <code>yres</code> set the screen size; the console and X both take it.</li>
+  <li>For UEFI add <code>-machine q35</code> and the OVMF firmware (<code>-drive if=pflash,…</code>).</li>
+  <li>"No bootable device" means the disk has no system on it yet: install first.</li>
+</ul>
+<h3>On a real machine</h3>
+<pre><code>lsblk                                   # find the USB stick, e.g. /dev/sdb
+sudo dd if=freelinx-base-x86_64.iso of=/dev/sdX bs=4M conv=fsync status=progress</code></pre>
+<p>Boot from the stick. BIOS and UEFI both work. <b>Secure Boot has to be off</b>: FreeLinX is not signed.</p>
+<div class="note warn"><code>dd</code> erases the target. Check with <code>lsblk</code> that it is the stick.</div>
+
+<h2 id="install">Installing</h2>
+<p>The live system opens a root shell. Run <code>xsetup</code>. It asks one question at a time across 13 steps, records each finished step, and an interrupted install continues where it stopped.</p>
+<table>
+  <tr><th>#</th><th>Step</th><th>What it sets</th></tr>
+  <tr><td>1</td><td><code>setup-keymap</code></td><td>console keyboard layout</td></tr>
+  <tr><td>2</td><td><code>setup-hostname</code></td><td>machine name (RFC 1123 rules)</td></tr>
+  <tr><td>3</td><td><code>setup-interfaces</code></td><td>wired DHCP or a static address; Wi-Fi network and passphrase</td></tr>
+  <tr><td>4</td><td><code>setup-passwd</code></td><td>root password, asked twice</td></tr>
+  <tr><td>5</td><td><code>setup-timezone</code></td><td>time zone</td></tr>
+  <tr><td>6</td><td><code>setup-proxy</code></td><td>HTTP proxy, if any</td></tr>
+  <tr><td>7</td><td><code>setup-ntp</code></td><td>clock synchronisation (ntpd)</td></tr>
+  <tr><td>8</td><td><code>setup-apkrepos</code></td><td>package repository URL</td></tr>
+  <tr><td>9</td><td><code>setup-user</code></td><td>a user, whether they may use <code>doas</code> (group wheel), password asked twice</td></tr>
+  <tr><td>10</td><td><code>setup-sshd</code></td><td>OpenSSH server on or off</td></tr>
+  <tr><td>11</td><td><code>setup-disk</code></td><td>run from RAM, or install to a disk (erases it, only after you type <code>yes</code>)</td></tr>
+  <tr><td>12–13</td><td><code>setup-lbu</code>, <code>setup-apkcache</code></td><td>report where changes and the package cache are kept</td></tr>
+</table>
+<h3>The disk layout</h3>
+<table>
+  <tr><th>Partition</th><th>Size</th><th>Contents</th></tr>
+  <tr><td>ESP (<code>FLX_BOOT</code>, FAT32)</td><td>1 GiB</td><td>the kernel and Limine, for UEFI and BIOS</td></tr>
+  <tr><td>BIOS boot</td><td>1 MiB</td><td>Limine's BIOS stage</td></tr>
+  <tr><td><code>FLX_ROOT</code> (ext4)</td><td>30% of the disk, 6–64 GiB</td><td><code>/</code>, the whole system</td></tr>
+  <tr><td><code>FLX_HOME</code> (ext4)</td><td>the rest</td><td><code>/home</code></td></tr>
+</table>
+<p>The disk needs at least 8 GiB. <code>/etc/fstab</code> and <code>/etc/flx-disk</code> name both ext4 filesystems by UUID, so another disk with the same labels is never mounted by mistake.</p>
+
+<h2 id="how">How it works</h2>
+
+<h3 id="live">The live medium</h3>
+<p>The live system is not copied into RAM. It is read from the medium, and only what the session changes is kept in RAM. This is how the live media of other distributions work too.</p>
+<div class="flow" role="img" aria-label="Live boot: Limine loads the kernel and a 290 KB initramfs; flxlive mounts the squashfs with a tmpfs overlay; the system's /init starts services">
+  <div class="step"><b>Limine</b>loads the kernel and the 290 KB initramfs</div><div class="arrow">→</div>
+  <div class="step hi"><b>flxlive</b>finds the volume <code>FREELINX_LIVE</code>, attaches <code>boot/root.sfs</code> to a loop device</div><div class="arrow">→</div>
+  <div class="step"><b>overlay</b>squashfs read-only below, tmpfs above for changes (75% of RAM at most)</div><div class="arrow">→</div>
+  <div class="step"><b>/init</b>devices, network, then runit starts the services</div>
+</div>
+<p><code>flxlive</code> is a 46 KB static C program. It is C rather than a script because switching the root needs <code>MS_MOVE</code>, <code>chroot</code> and a loop device, and the userland has no <code>switch_root</code>, <code>chroot</code> or <code>losetup</code>. If anything fails it says why and starts a shell. The medium stays readable at <code>/media/flx</code>.</p>
+<p>On the ISO: <code>boot/bzImage</code> (the kernel), <code>boot/initramfs.img.gz</code> (flxlive and a static <code>sh</code>), <code>boot/root.sfs</code> (the system, squashfs with zstd), and Limine.</p>
+
+<h3 id="installed">The installed system</h3>
+<p>An installed FreeLinX boots the way other installed systems do. It has no initramfs at all, because the storage drivers and ext4 are built into the kernel.</p>
+<div class="flow" role="img" aria-label="Installed boot: Limine passes root=PARTUUID ro; the kernel mounts the root partition; /init runs e2fsck, remounts read-write and starts services; login on every console">
+  <div class="step"><b>Limine</b>passes <code>root=PARTUUID=… ro init=/init</code></div><div class="arrow">→</div>
+  <div class="step"><b>kernel</b>mounts <code>FLX_ROOT</code> read-only and runs <code>/init</code> from it</div><div class="arrow">→</div>
+  <div class="step hi"><b>/init</b><code>e2fsck -p</code>, remount read-write, <code>/home</code>, <code>/tmp</code> in RAM</div><div class="arrow">→</div>
+  <div class="step"><b>runit</b>services start; every console asks for a login</div>
+</div>
+<ul>
+  <li>An installed system uses about 55 MB of RAM after boot.</li>
+  <li>If <code>e2fsck</code> repairs the root filesystem, the machine restarts. If it finds errors it will not fix, you get a shell.</li>
+  <li>The boot menu has a <b>Rescue shell</b> entry: the filesystems and devices come up, no service starts, and the console is a root shell.</li>
+  <li>On shutdown <code>/</code> is remounted read-only, so the disk is clean when the power goes.</li>
+</ul>
+
+<h3 id="services">Services and consoles</h3>
+<p>Services are runit directories in <code>/var/service</code>: <code>shell</code> (the consoles), <code>dbus</code>, <code>ntpd</code>, <code>flxwifi</code>, and <code>sshd</code> when it was enabled. Devices are handled by <code>mdevd</code>, started by <code>/init</code>.</p>
+<p><code>/sbin/flxconsole</code> runs on the screen (tty1 to tty3) and on the serial line (ttyS0):</p>
+<ul>
+  <li>on the live medium it opens a root shell on each console;</li>
+  <li>on an installed system (<code>/etc/flx-installed</code> exists) it runs <code>getty</code> and <code>login</code>, and starts them again after you log out. If <code>getty</code> is missing it opens nothing rather than an unauthenticated shell.</li>
+</ul>
+
+<h2 id="packages">Packages: xpkg</h2>
+<p><code>xpkg</code> installs software from the FreeLinX repository: 428 packages, from libraries to Xorg, Firefox and mpv.</p>
+<pre><code>xpkg update                 # refresh the index
+xpkg search editor          # find packages
+xpkg install tmux           # install, with everything it needs
+xpkg upgrade                # upgrade everything
+xpkg remove tmux
+xpkg list -e                # what you installed yourself</code></pre>
+<h3>Why you can trust what it installs</h3>
+<ul>
+  <li>The repository index is signed with Ed25519. xpkg checks it against the key in <code>/etc/xpkg/keys</code> and refuses an index that does not verify.</li>
+  <li>Every archive is checked against its sha256 in the signed index before anything is unpacked.</li>
+  <li>Installs are atomic: an install that fails half way (for example, the disk fills up) is rolled back, and nothing broken stays behind.</li>
+  <li>Every package passes the no-GNU check before it is published.</li>
+</ul>
+<p>The repository is on Hugging Face (<code>FreeLinX/packages</code>); <code>xpkg repo add &lt;url&gt;</code> adds another.</p>
+
+<h2 id="desktop">A desktop</h2>
+<pre><code>xpkg install xorg xinit openbox      # pulls in fonts, the st terminal and the keymaps
+startx</code></pre>
+<ul>
+  <li>Right-click the desktop for the menu: Terminal, Reconfigure, Restart, Exit.</li>
+  <li>Without <code>~/.xinitrc</code>, <code>startx</code> starts openbox with an <code>st</code> terminal.</li>
+  <li>Your own <code>~/.xinitrc</code> should end in <code>exec openbox --startup st</code>. A terminal started next to openbox can come up before openbox manages the screen and never show.</li>
+  <li>Screen size: <code>xpkg install xrandr</code>, then <code>xrandr -s 1920x1080</code>.</li>
+  <li>Firefox: <code>xpkg install firefox</code>. It needs about 500 MB, which a live session in a 2 GB machine does not have: install first, or give the machine more RAM.</li>
+</ul>
+
+<h2 id="using">Everyday use</h2>
+<table>
+  <tr><th>To</th><th>Run</th></tr>
+  <tr><td>run a command as root</td><td><code>doas &lt;command&gt;</code> (users in <code>wheel</code>)</td></tr>
+  <tr><td>change your password</td><td><code>passwd</code></td></tr>
+  <tr><td>add a user</td><td><code>doas flxadduser bob</code>, or <code>--admin</code> to allow <code>doas</code></td></tr>
+  <tr><td>connect to Wi-Fi</td><td><code>flxwifi scan</code>, then <code>FLXWIFI_PASS=secret flxwifi connect "MyNet"</code></td></tr>
+  <tr><td>read a manual page</td><td><code>man ls</code>, <code>apropos copy</code></td></tr>
+  <tr><td>compile C</td><td><code>cc hello.c -o hello</code></td></tr>
+  <tr><td>manage a service</td><td><code>sv status /var/service/*</code>, <code>sv restart sshd</code></td></tr>
+  <tr><td>switch off, restart</td><td><code>poweroff</code>, <code>reboot</code></td></tr>
+  <tr><td>system summary</td><td><code>fastfetch</code></td></tr>
+</table>
+
+<h2 id="upgrade">Upgrading</h2>
+<p>Boot the new release's ISO on the installed machine and run <code>flxupgrade</code>. It replaces the system files on the root partition (<code>/usr</code>, <code>/bin</code>, <code>/sbin</code>, <code>/lib</code>, <code>/init</code>), adds the files in <code>/etc</code> that the new release has and yours lacks, and puts the new kernel and Limine on the boot partition. Your settings, users, packages and <code>/home</code> stay. Then run <code>doas xpkg upgrade</code>.</p>
+<p>Systems installed with 1.0.13 to 1.1.x ran from an image in RAM; <code>flxupgrade</code> converts them to run from their disk.</p>
+<p>Packages do not need a new ISO: <code>xpkg upgrade</code> is enough.</p>
+
+<h2 id="build">Building from source</h2>
+<p>The build runs on any x86_64 Linux machine, needs no root, and produces the same ISO that is released.</p>
+<h3>1. Host tools</h3>
+<pre><code>sudo apt install git curl python3 openssl xorriso squashfs-tools cpio xz-utils binutils
+sudo apt install qemu-system-x86 qemu-utils ovmf      # only for the QEMU tests</code></pre>
+<h3>2. The sources, side by side</h3>
+<pre><code>mkdir FreeLinX &amp;&amp; cd FreeLinX
+for r in FreeLinX-base src ports drivers; do
+    git clone https://github.com/FreeLinX/$r.git
+done</code></pre>
+<h3>3. The toolchain</h3>
+<pre><code>curl -LO https://github.com/FreeLinX/toolchain/releases/download/v1.0.0/toolchain.tar.gz
+tar -xzf toolchain.tar.gz            # -> FreeLinX/toolchain/ (clang, LLD, the musl sysroot)</code></pre>
+<h3>4. Build</h3>
+<pre><code>cd FreeLinX-base
+sh build-base.sh                     # -> out/freelinx-base-x86_64.iso (+ .sha256)</code></pre>
+<p>It takes a few minutes and downloads about 150 MB. What it does:</p>
+<ol>
+  <li><code>scripts/mkrootfs.sh</code> copies <code>src/rootfs</code> and installs the base packages (musl, OpenSSL, dbus, the kernel and firmware, toybox, xpkg, musl-dev, …) by name from the signed repository, so the image has a package database. It adds mandoc, less, iproute2, lsof, mksh, stty and tcc, the repository key, and trims what a console system does not use.</li>
+  <li>It refuses to continue when the source tree has uncommitted changes, when <code>flxconsole</code> would give an installed system a shell instead of a login, when a program needs a missing library, when a graphical program is left, or when <code>check-nognu.sh</code> finds GNU code.</li>
+  <li>The system is packed as <code>boot/root.sfs</code>; <code>scripts/flxlive.c</code> is compiled into the initramfs; all of it goes on a Limine ISO for BIOS and UEFI.</li>
+</ol>
+<h3>What the build fetches, and how it checks it</h3>
+<table>
+  <tr><th>What</th><th>From</th><th>Checked by</th></tr>
+  <tr><td>the base packages</td><td>the signed package repository</td><td>Ed25519 index signature, sha256 per archive</td></tr>
+  <tr><td>a host <code>xpkg</code>, when the machine has none</td><td>the same repository</td><td>the same (<code>scripts/host-xpkg.sh</code>)</td></tr>
+  <tr><td><code>file-5.46.tar.gz</code>, for <code>magic.mgc</code></td><td>the FreeLinX source mirror</td><td>its recorded sha256</td></tr>
+</table>
+<h3>Options</h3>
+<table>
+  <tr><th>Variable</th><th>Effect</th></tr>
+  <tr><td><code>SERIAL=1</code></td><td>kernel console on ttyS0 too (tests, headless machines)</td></tr>
+  <tr><td><code>OUT=path.iso</code></td><td>where the ISO goes</td></tr>
+  <tr><td><code>ALLOW_DIRTY=1</code></td><td>build from a source tree with uncommitted changes (testing only)</td></tr>
+  <tr><td><code>XPKG</code>, <code>SYSROOT</code>, <code>LIVECC</code>, <code>REPO</code>, <code>LIMINE_DIR</code>, <code>FLXSRC</code></td><td>point any input elsewhere</td></tr>
+</table>
+
+<h2 id="tests">Tests and quality</h2>
+<table>
+  <tr><th>Suite</th><th>What it checks</th></tr>
+  <tr><td><code>test-ui.sh</code></td><td>the installer's menus, prompts and input rules (74 checks)</td></tr>
+  <tr><td><code>test-setup-disk.sh</code></td><td>the disk step's plan: layout, sizes, guards, dry runs</td></tr>
+  <tr><td><code>test-destructive.sh</code></td><td>what an install does to bytes, using the image's own tools on image files</td></tr>
+  <tr><td><code>test-xsetup-qemu.sh</code></td><td>boots the ISO in QEMU (BIOS or UEFI), checks the live system's RAM and logo, answers all 13 steps, boots the disk, logs in as user and root, checks the root filesystem, PARTUUID, <code>/tmp</code>, <code>/home</code>, services, banner and device modes, then reboots and checks that files stayed (44 checks)</td></tr>
+  <tr><td><code>test-upgrade-qemu.sh</code></td><td>installs an older release, upgrades it with <code>flxupgrade</code>, checks version, files, passwords, hostname and services (14 checks)</td></tr>
+  <tr><td>src: <code>test-console.sh</code>, <code>test-flxconsole.sh</code>, <code>test-mdevconf.sh</code></td><td>the console service, login on installed systems, device rules</td></tr>
+</table>
+<p>The suites that need no VM, shellcheck and the no-GNU check run on every push in GitHub Actions. Each release is published only after the QEMU suites pass on that exact ISO.</p>
+
+<h2 id="reference">Command reference</h2>
+<p>FreeLinX's own commands. Everything else has a manual page: <code>man &lt;command&gt;</code>.</p>
+
+<div class="cmd">
+<h4>xsetup</h4>
+<div class="syn">xsetup [--list | --status | --reset STEP | STEP...]</div>
+<p>Installs FreeLinX, one step at a time. With no arguments it runs every step not done yet, in order.</p>
+<dl>
+  <dt>--list</dt><dd>the 13 steps</dd>
+  <dt>--status</dt><dd>which steps are done</dd>
+  <dt>--reset STEP</dt><dd>forget a step so it runs again</dd>
+  <dt>STEP</dt><dd>run one step on its own, e.g. <code>xsetup setup-sshd</code></dd>
+</dl>
+</div>
+
+<div class="cmd">
+<h4>xpkg</h4>
+<div class="syn">xpkg [options] command [arguments]</div>
+<dl>
+  <dt>search WORD · show NAME</dt><dd>find packages; details of a package in the repositories</dd>
+  <dt>install NAME|FILE... · reinstall · remove NAME... · autoremove</dt><dd>install with dependencies, install again, remove, remove dependencies nothing needs</dd>
+  <dt>update · upgrade [NAME...] · outdated</dt><dd>refresh the index; upgrade everything or the names; list what is newer</dd>
+  <dt>list [-e] · info NAME · files NAME · owns PATH · verify [NAME...]</dt><dd>installed packages (-e: only ones you asked for); details; files; which package owns a file; check files against the database</dd>
+  <dt>clean</dt><dd>delete downloaded archives</dd>
+  <dt>repo list | repo add URL | repo remove URL</dt><dd>manage repositories</dd>
+  <dt>-n, --dry-run · -f, --force · -q · -v · --root DIR · --allow-unsigned · --no-scripts · -V</dt><dd>show only; override checks; quiet; list every file; manage a system mounted at DIR; accept an unsigned repository; skip package scripts; version</dd>
+</dl>
+</div>
+
+<div class="cmd">
+<h4>flxupgrade</h4>
+<div class="syn">doas flxupgrade [-y] [disk]</div>
+<p>Run from the new release's live ISO. Upgrades the installed FreeLinX it finds (or the one on <code>disk</code>), keeping settings, users, packages and <code>/home</code>; converts a 1.0.13–1.1.x install to run from its disk; rewrites Limine's BIOS stage so it matches the new boot loader. <code>-y</code> skips the question.</p>
+</div>
+
+<div class="cmd">
+<h4>passwd</h4>
+<div class="syn">passwd [user]</div>
+<p>Sets a password, asked twice with echo off. A user changes their own through <code>doas</code>; root can set anyone's. The hash is made by <code>flxpasswd</code> with the C library's <code>crypt(3)</code>.</p>
+</div>
+
+<div class="cmd">
+<h4>flxadduser</h4>
+<div class="syn">doas flxadduser NAME [--admin]</div>
+<p>Adds a user with a home directory and the groups a console user needs (video, audio, storage, input, users), then asks for a password. <code>--admin</code> also adds the user to <code>wheel</code>, which may run commands as root with <code>doas</code>.</p>
+</div>
+
+<div class="cmd">
+<h4>flxwifi</h4>
+<div class="syn">flxwifi scan | list | connect SSID [pass] | disconnect | status | off | auto</div>
+<p>Wi-Fi on top of wpa_supplicant and dhcpcd. Give the passphrase as <code>FLXWIFI_PASS=…</code> to keep it off the command line. Saved networks reconnect at boot (the <code>flxwifi</code> service runs <code>auto</code>).</p>
+</div>
+
+<div class="cmd">
+<h4>startx</h4>
+<div class="syn">startx [client] [-- server options]</div>
+<p>Starts X. With no <code>~/.xinitrc</code> it runs <code>/etc/X11/xinit/xinitrc</code>: openbox (or dwm, twm) with a terminal (st, urxvt or xterm) started once the window manager is ready.</p>
+</div>
+
+<div class="cmd">
+<h4>Other FreeLinX tools</h4>
+<dl>
+  <dt>flxpart --show DISK · --create-standard [--esp-size MB] [--flx-sys-size MB] [--dry-run] DISK</dt><dd>show or write the GPT layout xsetup uses</dd>
+  <dt>flxconsole</dt><dd>the console service: shells on the live medium, logins on an installed system</dd>
+  <dt>flxautomount</dt><dd>mounts removable media as they appear (called by mdevd)</dd>
+  <dt>flxifconfig · flxroute</dt><dd>bring an interface up with an address; set a route</dd>
+  <dt>flxnet</dt><dd>a small text menu for wired and Wi-Fi networking</dd>
+  <dt>flxtz</dt><dd>set the time zone</dd>
+  <dt>reboot · poweroff</dt><dd>stop the services, unmount, remount <code>/</code> read-only and restart or switch off</dd>
+</dl>
+</div>
+
+<h2 id="repos">Repositories</h2>
+<table>
+  <tr><th>Repository</th><th>What it holds</th></tr>
+  <tr><td><a href="https://github.com/FreeLinX/FreeLinX-base">FreeLinX-base</a></td><td>the base build, the installer (<code>xsetup</code>), <code>flxlive</code>, the tests, the releases</td></tr>
+  <tr><td><a href="https://github.com/FreeLinX/src">src</a></td><td>the root filesystem: <code>/init</code>, system scripts, NetBSD tools, manual pages</td></tr>
+  <tr><td><a href="https://github.com/FreeLinX/ports">ports</a></td><td>recipes and built packages for the console ports</td></tr>
+  <tr><td><a href="https://github.com/FreeLinX/FreeLinX-desk">FreeLinX-desk</a></td><td>the desktop and the build of the shared package stack (Xorg, GTK, Firefox, …)</td></tr>
+  <tr><td><a href="https://github.com/FreeLinX/xpkg">xpkg</a></td><td>the package manager and the repository tools</td></tr>
+  <tr><td><a href="https://github.com/FreeLinX/toolchain">toolchain</a></td><td>clang, LLD and the musl sysroot</td></tr>
+  <tr><td><a href="https://github.com/FreeLinX/drivers">drivers</a></td><td>Limine and installer helpers</td></tr>
+  <tr><td><a href="https://github.com/FreeLinX/kernel">kernel</a></td><td>kernel configuration and build</td></tr>
+  <tr><td><a href="https://huggingface.co/datasets/FreeLinX/packages">FreeLinX/packages</a> (Hugging Face)</td><td>the signed package repository</td></tr>
+</table>
+
+<h2 id="status">Status and limits</h2>
+<ul>
+  <li><b>Tested in QEMU/KVM only.</b> Every release passes the install and upgrade suites on BIOS and UEFI, but FreeLinX has not yet been tested on real hardware. Reports are welcome.</li>
+  <li><b>Secure Boot</b> is not supported: switch it off.</li>
+  <li><b>eMMC disks</b> (some low-cost laptops) cannot be the install target yet: their driver is a kernel module, and the installed system boots without an initramfs.</li>
+  <li><b>Wi-Fi</b> firmware for Intel, Atheros, Realtek and MediaTek ships, but Wi-Fi has only been tested against a virtual access point.</li>
+  <li>A few repository programs misbehave when run without what they expect: <code>nvi</code> crashes on start, and <code>lemonbar</code> and the <code>imlib2</code> demos crash when there is no X display.</li>
+</ul>
+
+<footer>
+FreeLinX documentation for base 1.3.1, October 2026. BSD-2-Clause. Source of this page: <a href="https://github.com/FreeLinX/FreeLinX/blob/main/docs/index.html">docs/index.html</a>. Bugs: <a href="https://github.com/FreeLinX/FreeLinX/issues">GitHub issues</a>.
+</footer>
+</main>
+</div>
+<script>
+(function () {
+  var root = document.documentElement, btn = document.getElementById('theme');
+  try { var t = localStorage.getItem('flx-theme'); if (t) root.setAttribute('data-theme', t); } catch (e) {}
+  btn.addEventListener('click', function () {
+    var dark = root.getAttribute('data-theme') === 'dark' ||
+      (!root.getAttribute('data-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    var next = dark ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('flx-theme', next); } catch (e) {}
+  });
+})();
+</script>
+</body>
+</html>
