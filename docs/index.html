@@ -6,122 +6,59 @@
 <title>FreeLinX Documentation</title>
 <meta name="description" content="FreeLinX: an independent Linux distribution with no GNU code. What it is, how it works, how to install, use and build it, and a reference of its commands.">
 <style>
-:root {
-  --bg: #ffffff; --bg-soft: #f6f7f9; --bg-code: #f2f3f5; --ink: #1b1f24; --ink-soft: #57606a;
-  --rule: #d8dde3; --accent: #c2410c; --accent-soft: #fff1e8; --link: #b33a0a; --red: #b91c1c;
-  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
-  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", sans-serif;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #111418; --bg-soft: #171b20; --bg-code: #1c2127; --ink: #e6e9ed; --ink-soft: #9aa4af;
-    --rule: #2c333b; --accent: #fb923c; --accent-soft: #2a1b12; --link: #fdba74; --red: #f87171;
-  }
-}
-:root[data-theme="dark"] {
-  --bg: #111418; --bg-soft: #171b20; --bg-code: #1c2127; --ink: #e6e9ed; --ink-soft: #9aa4af;
-  --rule: #2c333b; --accent: #fb923c; --accent-soft: #2a1b12; --link: #fdba74; --red: #f87171;
-}
-* { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.65 var(--sans); }
-a { color: var(--link); text-decoration: underline; text-underline-offset: 2px; }
-.layout { display: grid; grid-template-columns: 260px minmax(0, 1fr); max-width: 1180px; margin: 0 auto; }
-nav.side { position: sticky; top: 0; height: 100vh; overflow-y: auto; padding: 28px 20px 40px 24px; border-right: 1px solid var(--rule); font-size: 14.5px; }
-nav.side .brand { font-weight: 700; font-size: 19px; color: var(--ink); text-decoration: none; display: block; margin-bottom: 4px; }
-nav.side .brand span { color: var(--accent); }
-nav.side .ver { color: var(--ink-soft); font-size: 13px; margin-bottom: 20px; }
-nav.side ol { list-style: none; padding: 0; margin: 0; }
-nav.side li { margin: 2px 0; }
-nav.side a { color: var(--ink-soft); text-decoration: none; display: block; padding: 3px 8px; border-radius: 6px; }
-nav.side a:hover { color: var(--ink); background: var(--bg-soft); }
-nav.side .sub a { padding-left: 22px; font-size: 13.5px; }
-main { padding: 40px 48px 96px; min-width: 0; }
-h1 { font-size: 40px; line-height: 1.15; margin: 0 0 12px; letter-spacing: -0.02em; }
-h1 span { color: var(--accent); }
-.lead { font-size: 19px; color: var(--ink-soft); max-width: 720px; margin: 0 0 28px; }
-h2 { font-size: 27px; margin: 64px 0 14px; padding-top: 8px; border-top: 1px solid var(--rule); letter-spacing: -0.01em; }
-h3 { font-size: 19px; margin: 32px 0 8px; }
-h4 { font-size: 16px; margin: 22px 0 6px; font-family: var(--mono); }
-p, ul, ol { max-width: 760px; }
-li { margin: 4px 0; }
-code { font-family: var(--mono); font-size: 0.9em; background: var(--bg-code); padding: 1px 5px; border-radius: 4px; }
-pre { font-family: var(--mono); font-size: 14px; line-height: 1.5; background: var(--bg-code); border: 1px solid var(--rule); border-radius: 8px; padding: 14px 16px; overflow-x: auto; max-width: 860px; }
-pre code { background: none; padding: 0; font-size: inherit; }
-table { border-collapse: collapse; margin: 14px 0 20px; font-size: 15px; display: block; overflow-x: auto; max-width: 100%; }
-th, td { border: 1px solid var(--rule); padding: 7px 11px; text-align: left; vertical-align: top; }
-th { background: var(--bg-soft); font-weight: 600; }
-.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin: 22px 0 8px; max-width: 860px; }
-.fact { border: 1px solid var(--rule); border-radius: 10px; padding: 14px 16px; background: var(--bg-soft); }
-.fact b { display: block; font-size: 22px; color: var(--accent); }
-.fact span { color: var(--ink-soft); font-size: 14px; }
-.note { border-left: 3px solid var(--accent); background: var(--accent-soft); padding: 10px 16px; border-radius: 0 8px 8px 0; max-width: 760px; margin: 16px 0; }
-.warn { border-left-color: var(--red); }
-.flow { display: flex; flex-wrap: wrap; align-items: stretch; gap: 0; margin: 18px 0 8px; max-width: 900px; }
-.flow .step { flex: 1 1 150px; border: 1px solid var(--rule); border-radius: 10px; padding: 12px 14px; background: var(--bg-soft); font-size: 14px; min-width: 150px; }
-.flow .step b { display: block; font-size: 14.5px; margin-bottom: 4px; }
-.flow .step.hi { border-color: var(--accent); background: var(--accent-soft); }
-.flow .arrow { align-self: center; padding: 0 8px; color: var(--ink-soft); font-size: 20px; }
-.cmd { border: 1px solid var(--rule); border-radius: 10px; padding: 4px 20px 12px; margin: 18px 0; max-width: 860px; }
-.cmd h4 { font-size: 17px; margin-top: 16px; }
-.cmd .syn { font-family: var(--mono); font-size: 14px; color: var(--ink-soft); margin: -2px 0 8px; }
-dl { margin: 8px 0; max-width: 800px; }
-dt { font-family: var(--mono); font-size: 14px; margin-top: 8px; }
-dd { margin: 2px 0 0 22px; color: var(--ink); }
-.theme { position: fixed; top: 14px; right: 16px; border: 1px solid var(--rule); background: var(--bg-soft); color: var(--ink); border-radius: 8px; padding: 5px 10px; font: 13px var(--sans); cursor: pointer; }
-footer { margin-top: 72px; color: var(--ink-soft); font-size: 14px; border-top: 1px solid var(--rule); padding-top: 18px; }
-@media (max-width: 860px) {
-  .layout { display: block; }
-  nav.side { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--rule); padding: 20px 16px; }
-  nav.side ol { columns: 2; }
-  nav.side .sub { display: none; }
-  main { padding: 28px 16px 72px; }
-  h1 { font-size: 31px; }
-  .flow .arrow { transform: rotate(90deg); width: 100%; text-align: center; padding: 2px 0; }
-  .flow .step { flex-basis: 100%; }
-}
+/* FreeLinX, the way project pages looked in 1997. */
+:root { color-scheme: light; }
+body { margin: 0; padding: 16px; background: #c0c0c0; color: #000; font: 17px/1.5 "Times New Roman", Times, serif; }
+.page { max-width: 900px; margin: 0 auto; background: #fff; padding: 14px 26px 22px;
+        border: 2px solid; border-color: #fff #808080 #808080 #fff; box-shadow: 1px 1px 0 #000; }
+a { color: #0000ee; } a:visited { color: #551a8b; } a:active { color: #ff0000; }
+h1 { font-size: 40px; margin: 6px 0 4px; font-weight: bold; }
+h1 span { color: #cc0000; }
+.new { font-size: 15px; color: #cc0000; font-weight: bold; vertical-align: middle; animation: blink 1s steps(1) infinite; }
+@keyframes blink { 50% { visibility: hidden; } }
+@media (prefers-reduced-motion: reduce) { .new { animation: none; } }
+.lead { font-style: italic; }
+h2 { font-size: 26px; margin: 10px 0 8px; }
+h3 { font-size: 20px; margin: 20px 0 6px; }
+h4 { font-family: "Courier New", Courier, monospace; font-size: 17px; margin: 10px 0 2px; }
+hr { border: 0; border-top: 2px groove #a0a0a0; margin: 22px 0 8px; }
+code, pre, tt, dt { font-family: "Courier New", Courier, monospace; font-size: 15px; }
+pre { background: #f0f0f0; border: 1px solid #808080; padding: 8px 10px; overflow-x: auto; }
+pre.ascii { background: #000; color: #33ff33; border: 2px inset #808080; font-size: 13.5px; line-height: 1.35; }
+table { border-collapse: collapse; margin: 10px 0 14px; display: block; overflow-x: auto; max-width: 100%; }
+th, td { border: 1px solid #808080; padding: 4px 8px; text-align: left; vertical-align: top; }
+th { background: #dcdcdc; }
+.topnav { font-size: 15px; background: #eeeeee; border: 1px solid #808080; padding: 4px 8px; }
+.note { border: 1px dashed #808080; background: #ffffe0; padding: 6px 10px; margin: 12px 0; }
+.note.warn { background: #ffe4e1; }
+.cmd { border-top: 1px dotted #808080; margin: 12px 0 0; padding-top: 4px; }
+.cmd .syn { font-family: "Courier New", Courier, monospace; font-size: 15px; font-weight: bold; }
+dd { margin: 0 0 6px 28px; }
+.badges { text-align: center; }
+.b88 { display: inline-block; width: 88px; height: 31px; margin: 3px; font: bold 10px/13px Verdana, Arial, sans-serif;
+       text-align: center; padding-top: 2px; border: 2px solid; border-color: #fff #404040 #404040 #fff; background: #000080; color: #ffff00; }
+.b88:nth-child(2) { background: #800000; color: #fff; } .b88:nth-child(3) { background: #ff6600; color: #000; }
+.b88:nth-child(4) { background: #008080; color: #fff; } .b88:nth-child(5) { background: #404040; color: #00ff00; }
+address { text-align: center; font-size: 14px; }
+@media (max-width: 600px) { body { padding: 6px; } .page { padding: 10px 12px; } h1 { font-size: 30px; } }
 </style>
 </head>
 <body>
-<button class="theme" id="theme" type="button" aria-label="Switch colour theme">Theme</button>
-<div class="layout">
-<nav class="side" aria-label="Contents">
-  <a class="brand" href="#top">Free<span>LinX</span></a>
-  <div class="ver">Documentation · base 1.3.1</div>
-  <ol>
-    <li><a href="#what">What FreeLinX is</a></li>
-    <li><a href="#inside">What is inside</a></li>
-    <li><a href="#try">Trying it</a></li>
-    <li><a href="#install">Installing</a></li>
-    <li><a href="#how">How it works</a></li>
-    <li class="sub"><a href="#live">The live medium</a></li>
-    <li class="sub"><a href="#installed">The installed system</a></li>
-    <li class="sub"><a href="#services">Services and consoles</a></li>
-    <li><a href="#packages">Packages: xpkg</a></li>
-    <li><a href="#desktop">A desktop</a></li>
-    <li><a href="#using">Everyday use</a></li>
-    <li><a href="#upgrade">Upgrading</a></li>
-    <li><a href="#build">Building from source</a></li>
-    <li><a href="#tests">Tests and quality</a></li>
-    <li><a href="#reference">Command reference</a></li>
-    <li><a href="#repos">Repositories</a></li>
-    <li><a href="#status">Status and limits</a></li>
-  </ol>
-</nav>
-<main id="top">
+<div class="page" id="top">
+<p class="topnav">[ <a href="#what">What</a> | <a href="#inside">Inside</a> | <a href="#try">Try</a> | <a href="#install">Install</a> | <a href="#how">How it works</a> | <a href="#packages">Packages</a> | <a href="#desktop">Desktop</a> | <a href="#using">Use</a> | <a href="#upgrade">Upgrade</a> | <a href="#build">Build</a> | <a href="#tests">Tests</a> | <a href="#reference">Commands</a> | <a href="#repos">Repos</a> | <a href="#status">Status</a> ]</p>
 
-<h1>Free<span>LinX</span></h1>
+
+<h1>Free<span>LinX</span> <small class="new">NEW: base 1.3.1!</small></h1>
 <p class="lead">An independent Linux distribution with no GNU code in it: the Linux kernel, a NetBSD userland, the musl C library, everything built with LLVM. This page explains what it is, how it works, how to install, use and build it, and what each of its own commands does.</p>
 
-<div class="facts">
-  <div class="fact"><b>0</b><span>GNU files: every release checks all 588 programs and libraries</span></div>
-  <div class="fact"><b>~60 MB</b><span>RAM used by the live system after boot</span></div>
-  <div class="fact"><b>311 MB</b><span>the ISO, for BIOS and UEFI</span></div>
-  <div class="fact"><b>428</b><span>packages in the signed repository</span></div>
-</div>
+<table class="facts">
+<tr><th>GNU files</th><th>Live system RAM</th><th>ISO size</th><th>Packages</th></tr>
+<tr><td>0 (all 588 programs checked)</td><td>~60 MB after boot</td><td>311 MB, BIOS and UEFI</td><td>428, signed</td></tr>
+</table>
 
 <p><a href="https://github.com/FreeLinX/FreeLinX-base/releases/latest">Download the latest release</a> · <a href="https://github.com/FreeLinX">Source on GitHub</a> · Licence: BSD-2-Clause</p>
 
+<hr>
 <h2 id="what">What FreeLinX is</h2>
 <p>Most Linux systems are built on GNU: glibc, coreutils, bash, GCC. FreeLinX replaces all of it. The C library is <b>musl</b>, the compiler is <b>clang/LLVM</b>, the everyday commands (<code>ls</code>, <code>cp</code>, <code>sh</code>, <code>awk</code>, …) come from <b>NetBSD</b>, init is <b>runit</b>, and the package manager, the installer and the boot code are FreeLinX's own.</p>
 <p>The rule is checked, not promised. Before an image is made, <code>check-nognu.sh</code> reads every ELF file in it and refuses the build if it finds a GCC marker, a glibc interpreter or library, or GNU code linked in statically (it recognises ncurses, readline, gettext and others by their strings).</p>
@@ -131,6 +68,7 @@ footer { margin-top: 72px; color: var(--ink-soft); font-size: 14px; border-top: 
   <li><b>FreeLinX desktop</b> (FreeLinX-desk): an Openbox desktop with Firefox and graphical applications, built from the same packages.</li>
 </ul>
 
+<hr>
 <h2 id="inside">What is inside</h2>
 <table>
   <tr><th>Part</th><th>What FreeLinX uses</th></tr>
@@ -147,6 +85,7 @@ footer { margin-top: 72px; color: var(--ink-soft); font-size: 14px; border-top: 
 </table>
 <p>The base image has no X11, GTK, Mesa or fonts; those are packages (see <a href="#desktop">A desktop</a>).</p>
 
+<hr>
 <h2 id="try">Trying it</h2>
 <h3>In QEMU</h3>
 <p>Make a virtual disk once, then boot the ISO from it. KVM makes it fast; without <code>-enable-kvm</code> everything is 10 to 20 times slower.</p>
@@ -168,6 +107,7 @@ sudo dd if=freelinx-base-x86_64.iso of=/dev/sdX bs=4M conv=fsync status=progress
 <p>Boot from the stick. BIOS and UEFI both work. <b>Secure Boot has to be off</b>: FreeLinX is not signed.</p>
 <div class="note warn"><code>dd</code> erases the target. Check with <code>lsblk</code> that it is the stick.</div>
 
+<hr>
 <h2 id="install">Installing</h2>
 <p>The live system opens a root shell. Run <code>xsetup</code>. It asks one question at a time across 13 steps, records each finished step, and an interrupted install continues where it stopped.</p>
 <table>
@@ -195,27 +135,32 @@ sudo dd if=freelinx-base-x86_64.iso of=/dev/sdX bs=4M conv=fsync status=progress
 </table>
 <p>The disk needs at least 8 GiB. <code>/etc/fstab</code> and <code>/etc/flx-disk</code> name both ext4 filesystems by UUID, so another disk with the same labels is never mounted by mistake.</p>
 
+<hr>
 <h2 id="how">How it works</h2>
 
 <h3 id="live">The live medium</h3>
 <p>The live system is not copied into RAM. It is read from the medium, and only what the session changes is kept in RAM. This is how the live media of other distributions work too.</p>
-<div class="flow" role="img" aria-label="Live boot: Limine loads the kernel and a 290 KB initramfs; flxlive mounts the squashfs with a tmpfs overlay; the system's /init starts services">
-  <div class="step"><b>Limine</b>loads the kernel and the 290 KB initramfs</div><div class="arrow">→</div>
-  <div class="step hi"><b>flxlive</b>finds the volume <code>FREELINX_LIVE</code>, attaches <code>boot/root.sfs</code> to a loop device</div><div class="arrow">→</div>
-  <div class="step"><b>overlay</b>squashfs read-only below, tmpfs above for changes (75% of RAM at most)</div><div class="arrow">→</div>
-  <div class="step"><b>/init</b>devices, network, then runit starts the services</div>
-</div>
+<pre class="ascii" role="img" aria-label="Live boot: Limine loads the kernel and initramfs; flxlive mounts the squashfs with a tmpfs overlay; the system's /init starts services">
+ +-----------+     +----------------------+     +-------------------+     +-------------+
+ |  Limine   | --> |       flxlive        | --> |      overlay      | --> |    /init    |
+ | kernel +  |     | finds FREELINX_LIVE, |     | squashfs (ro)     |     | devices,    |
+ | 290 KB    |     | loops boot/root.sfs  |     | + tmpfs for your  |     | network,    |
+ | initramfs |     |                      |     | changes (75% RAM) |     | runit       |
+ +-----------+     +----------------------+     +-------------------+     +-------------+
+</pre>
 <p><code>flxlive</code> is a 46 KB static C program. It is C rather than a script because switching the root needs <code>MS_MOVE</code>, <code>chroot</code> and a loop device, and the userland has no <code>switch_root</code>, <code>chroot</code> or <code>losetup</code>. If anything fails it says why and starts a shell. The medium stays readable at <code>/media/flx</code>.</p>
 <p>On the ISO: <code>boot/bzImage</code> (the kernel), <code>boot/initramfs.img.gz</code> (flxlive and a static <code>sh</code>), <code>boot/root.sfs</code> (the system, squashfs with zstd), and Limine.</p>
 
 <h3 id="installed">The installed system</h3>
 <p>An installed FreeLinX boots the way other installed systems do. It has no initramfs at all, because the storage drivers and ext4 are built into the kernel.</p>
-<div class="flow" role="img" aria-label="Installed boot: Limine passes root=PARTUUID ro; the kernel mounts the root partition; /init runs e2fsck, remounts read-write and starts services; login on every console">
-  <div class="step"><b>Limine</b>passes <code>root=PARTUUID=… ro init=/init</code></div><div class="arrow">→</div>
-  <div class="step"><b>kernel</b>mounts <code>FLX_ROOT</code> read-only and runs <code>/init</code> from it</div><div class="arrow">→</div>
-  <div class="step hi"><b>/init</b><code>e2fsck -p</code>, remount read-write, <code>/home</code>, <code>/tmp</code> in RAM</div><div class="arrow">→</div>
-  <div class="step"><b>runit</b>services start; every console asks for a login</div>
-</div>
+<pre class="ascii" role="img" aria-label="Installed boot: Limine passes root=PARTUUID ro; the kernel mounts the root partition; /init runs e2fsck, remounts read-write; runit starts services with a login on every console">
+ +----------------+     +------------------+     +---------------------+     +-----------------+
+ |     Limine     | --> |      kernel      | --> |        /init        | --> |      runit      |
+ | root=PARTUUID= |     | mounts FLX_ROOT  |     | e2fsck -p, remount  |     | services,       |
+ | ro init=/init  |     | read-only        |     | rw, /home, /tmp     |     | login on        |
+ |                |     | (no initramfs)   |     | in RAM              |     | every console   |
+ +----------------+     +------------------+     +---------------------+     +-----------------+
+</pre>
 <ul>
   <li>An installed system uses about 55 MB of RAM after boot.</li>
   <li>If <code>e2fsck</code> repairs the root filesystem, the machine restarts. If it finds errors it will not fix, you get a shell.</li>
@@ -231,6 +176,7 @@ sudo dd if=freelinx-base-x86_64.iso of=/dev/sdX bs=4M conv=fsync status=progress
   <li>on an installed system (<code>/etc/flx-installed</code> exists) it runs <code>getty</code> and <code>login</code>, and starts them again after you log out. If <code>getty</code> is missing it opens nothing rather than an unauthenticated shell.</li>
 </ul>
 
+<hr>
 <h2 id="packages">Packages: xpkg</h2>
 <p><code>xpkg</code> installs software from the FreeLinX repository: 428 packages, from libraries to Xorg, Firefox and mpv.</p>
 <pre><code>xpkg update                 # refresh the index
@@ -248,6 +194,7 @@ xpkg list -e                # what you installed yourself</code></pre>
 </ul>
 <p>The repository is on Hugging Face (<code>FreeLinX/packages</code>); <code>xpkg repo add &lt;url&gt;</code> adds another.</p>
 
+<hr>
 <h2 id="desktop">A desktop</h2>
 <pre><code>xpkg install xorg xinit openbox      # pulls in fonts, the st terminal and the keymaps
 startx</code></pre>
@@ -259,6 +206,7 @@ startx</code></pre>
   <li>Firefox: <code>xpkg install firefox</code>. It needs about 500 MB, which a live session in a 2 GB machine does not have: install first, or give the machine more RAM.</li>
 </ul>
 
+<hr>
 <h2 id="using">Everyday use</h2>
 <table>
   <tr><th>To</th><th>Run</th></tr>
@@ -273,11 +221,13 @@ startx</code></pre>
   <tr><td>system summary</td><td><code>fastfetch</code></td></tr>
 </table>
 
+<hr>
 <h2 id="upgrade">Upgrading</h2>
 <p>Boot the new release's ISO on the installed machine and run <code>flxupgrade</code>. It replaces the system files on the root partition (<code>/usr</code>, <code>/bin</code>, <code>/sbin</code>, <code>/lib</code>, <code>/init</code>), adds the files in <code>/etc</code> that the new release has and yours lacks, and puts the new kernel and Limine on the boot partition. Your settings, users, packages and <code>/home</code> stay. Then run <code>doas xpkg upgrade</code>.</p>
 <p>Systems installed with 1.0.13 to 1.1.x ran from an image in RAM; <code>flxupgrade</code> converts them to run from their disk.</p>
 <p>Packages do not need a new ISO: <code>xpkg upgrade</code> is enough.</p>
 
+<hr>
 <h2 id="build">Building from source</h2>
 <p>The build runs on any x86_64 Linux machine, needs no root, and produces the same ISO that is released.</p>
 <h3>1. Host tools</h3>
@@ -316,6 +266,7 @@ sh build-base.sh                     # -> out/freelinx-base-x86_64.iso (+ .sha25
   <tr><td><code>XPKG</code>, <code>SYSROOT</code>, <code>LIVECC</code>, <code>REPO</code>, <code>LIMINE_DIR</code>, <code>FLXSRC</code></td><td>point any input elsewhere</td></tr>
 </table>
 
+<hr>
 <h2 id="tests">Tests and quality</h2>
 <table>
   <tr><th>Suite</th><th>What it checks</th></tr>
@@ -328,6 +279,7 @@ sh build-base.sh                     # -> out/freelinx-base-x86_64.iso (+ .sha25
 </table>
 <p>The suites that need no VM, shellcheck and the no-GNU check run on every push in GitHub Actions. Each release is published only after the QEMU suites pass on that exact ISO.</p>
 
+<hr>
 <h2 id="reference">Command reference</h2>
 <p>FreeLinX's own commands. Everything else has a manual page: <code>man &lt;command&gt;</code>.</p>
 
@@ -400,6 +352,7 @@ sh build-base.sh                     # -> out/freelinx-base-x86_64.iso (+ .sha25
 </dl>
 </div>
 
+<hr>
 <h2 id="repos">Repositories</h2>
 <table>
   <tr><th>Repository</th><th>What it holds</th></tr>
@@ -414,6 +367,7 @@ sh build-base.sh                     # -> out/freelinx-base-x86_64.iso (+ .sha25
   <tr><td><a href="https://huggingface.co/datasets/FreeLinX/packages">FreeLinX/packages</a> (Hugging Face)</td><td>the signed package repository</td></tr>
 </table>
 
+<hr>
 <h2 id="status">Status and limits</h2>
 <ul>
   <li><b>Tested in QEMU/KVM only.</b> Every release passes the install and upgrade suites on BIOS and UEFI, but FreeLinX has not yet been tested on real hardware. Reports are welcome.</li>
@@ -423,23 +377,21 @@ sh build-base.sh                     # -> out/freelinx-base-x86_64.iso (+ .sha25
   <li>A few repository programs misbehave when run without what they expect: <code>nvi</code> crashes on start, and <code>lemonbar</code> and the <code>imlib2</code> demos crash when there is no X display.</li>
 </ul>
 
-<footer>
-FreeLinX documentation for base 1.3.1, October 2026. BSD-2-Clause. Source of this page: <a href="https://github.com/FreeLinX/FreeLinX/blob/main/docs/index.html">docs/index.html</a>. Bugs: <a href="https://github.com/FreeLinX/FreeLinX/issues">GitHub issues</a>.
-</footer>
-</main>
+<hr>
+<p class="badges">
+<span class="b88">NO GNU<br>INSIDE</span>
+<span class="b88">BUILT WITH<br>LLVM</span>
+<span class="b88">NetBSD<br>USERLAND</span>
+<span class="b88">musl<br>libc</span>
+<span class="b88">runit<br>POWERED</span>
+</p>
+<address>
+FreeLinX documentation for base 1.3.1 &middot; BSD-2-Clause<br>
+Last modified: October 5, 2026 &middot; Best viewed with any browser<br>
+Page source: <a href="https://github.com/FreeLinX/FreeLinX/blob/main/docs/index.html">docs/index.html</a> &middot;
+Bugs: <a href="https://github.com/FreeLinX/FreeLinX/issues">GitHub issues</a>
+</address>
+
 </div>
-<script>
-(function () {
-  var root = document.documentElement, btn = document.getElementById('theme');
-  try { var t = localStorage.getItem('flx-theme'); if (t) root.setAttribute('data-theme', t); } catch (e) {}
-  btn.addEventListener('click', function () {
-    var dark = root.getAttribute('data-theme') === 'dark' ||
-      (!root.getAttribute('data-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
-    var next = dark ? 'light' : 'dark';
-    root.setAttribute('data-theme', next);
-    try { localStorage.setItem('flx-theme', next); } catch (e) {}
-  });
-})();
-</script>
 </body>
 </html>
