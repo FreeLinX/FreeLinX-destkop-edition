@@ -35,7 +35,8 @@ toolchain. It contains no GNU software.</p>
 <a href="https://github.com/FreeLinX/FreeLinX-base/releases/latest">download</a> |
 <a href="https://github.com/FreeLinX">source</a> |
 <a href="https://huggingface.co/datasets/FreeLinX/packages">packages</a> |
-<a href="https://github.com/FreeLinX/FreeLinX/issues">bugs</a>
+<a href="https://github.com/FreeLinX/FreeLinX/issues">bugs</a> |
+<a href="#support">donate</a>
 </p>
 <p>This document covers FreeLinX base 1.3.1: what it is, how to install and
 run it, how it works inside, and how to build it from source.</p>
@@ -43,6 +44,7 @@ run it, how it works inside, and how to build it from source.</p>
 <p>Contents:</p>
 <ol class="toc">
 <li><a href="#about">About</a></li>
+<li><a href="#how">How FreeLinX works</a></li>
 <li><a href="#get">Getting FreeLinX</a></li>
 <li><a href="#live">The live system</a></li>
 <li><a href="#install">Installing with xsetup</a></li>
@@ -60,7 +62,7 @@ run it, how it works inside, and how to build it from source.</p>
 <li><a href="#cmds">Command reference</a></li>
 <li><a href="#trouble">Troubleshooting</a></li>
 <li><a href="#repos">Repositories</a></li>
-<li><a href="#bugs">Known problems</a></li>
+<li><a href="#support">Supporting FreeLinX</a></li>
 </ol>
 
 <!-- ===================================================================== -->
@@ -83,7 +85,7 @@ Alpine or any other distribution. It combines:</p>
 </table>
 <p>Software that is GPL-licensed but not part of the GNU project, such as the
 Linux kernel, is allowed. What is excluded is GNU code: glibc, GCC and its
-runtime, and GNU libraries and tools. See <a href="#nognu">section 12</a> for
+runtime, and GNU libraries and tools. See <a href="#nognu">section 13</a> for
 how this is checked.</p>
 
 <h3>Editions</h3>
@@ -93,7 +95,7 @@ the package repository. This document is about base.</p>
 <p><b>FreeLinX desktop</b> (repository FreeLinX-desk) is built from the same
 packages and boots into an Openbox desktop with a browser based on Firefox ESR.
 Base can get close to it by installing packages (see
-<a href="#x11">section 11</a>).</p>
+<a href="#x11">section 12</a>).</p>
 
 <h3>What base contains</h3>
 <table>
@@ -120,7 +122,161 @@ is not supported as an installation target yet.</li>
 </ul>
 
 <!-- ===================================================================== -->
-<h2 id="get">2. Getting FreeLinX</h2>
+<h2 id="how">2. How FreeLinX works</h2>
+<p>This section is an overview of the whole system: its layers, what happens
+from power-on to the login prompt, which processes run, where files are and
+how programs find their libraries. The later sections describe each part in
+detail.</p>
+
+<h3>Layers</h3>
+<pre>+-------------------------------------------------------------+
+| your programs: st, firefox, vim, git ...    (from xpkg)     |
++-------------------------------------------------------------+
+| services: runit, mdevd, dbus, dhcpcd, ntpd, sshd, flxwifi   |
+| tools:    NetBSD userland, toybox, mksh, xpkg, xsetup       |
++-------------------------------------------------------------+
+| libraries: libc++, openssl, sqlite, zlib, netbsd-curses ... |
++-------------------------------------------------------------+
+| musl: the C library and the dynamic loader                  |
++-------------------------------------------------------------+
+| Linux kernel: drivers, filesystems, network, processes      |
++-------------------------------------------------------------+
+| firmware (BIOS or UEFI) and Limine                          |
++-------------------------------------------------------------+</pre>
+<p>Every program above the kernel was compiled with clang against musl. Each
+layer uses only the layers below it. There is no compatibility layer for
+glibc: a program built for another distribution's glibc does not run on
+FreeLinX and has to be rebuilt.</p>
+
+<h3>From power-on to the prompt</h3>
+<ol>
+<li><b>Firmware.</b> BIOS or UEFI finds the boot loader: Limine's
+BOOTX64.EFI on the EFI system partition, or Limine's BIOS stage in the BIOS
+boot partition.</li>
+<li><b>Limine.</b> Reads <code>limine.conf</code>, shows the menu, loads the
+kernel (and, on the live medium, the small initramfs) and passes the kernel
+command line.</li>
+<li><b>Kernel.</b> Starts the processors, memory management and the built-in
+drivers. On an installed system it finds the root partition by its PARTUUID
+and mounts it read-only. On the live medium it unpacks the initramfs and runs
+flxlive, which mounts the squashfs image from the medium under a RAM overlay
+and makes that the root.</li>
+<li><b>/init.</b> A shell script, running as process 1. It mounts /proc,
+/sys, /dev and /run, checks and remounts the root filesystem read-write,
+starts mdevd, loads drivers, mounts /home, starts the network and sets the
+host name.</li>
+<li><b>runsvdir.</b> /init replaces itself with runsvdir, which stays process
+1. It starts one runsv supervisor for every directory in /var/service.</li>
+<li><b>Services.</b> Each runsv starts its service and restarts it if it
+exits. The shell service runs flxconsole, which puts getty and login (or, on
+the live medium, a root shell) on the consoles.</li>
+<li><b>Login.</b> login checks the password against /etc/shadow, sets the
+user and group ids and starts the user's shell, mksh, which reads
+/etc/profile.</li>
+</ol>
+<p>On a virtual machine with KVM this takes a few seconds.</p>
+
+<h3>Processes on a running system</h3>
+<pre>PID 1  runsvdir -P /var/service
+         runsv shell  -- flxconsole
+                           getty ttyS0 / tty1 / tty2 / tty3
+                           login -- mksh          (after you log in)
+         runsv dbus   -- dbus-daemon --system
+         runsv ntpd   -- ntpd
+         runsv flxwifi
+         runsv sshd   -- sshd                     (if enabled)
+       mdevd                                      (started by /init)
+       dhcpcd                                     (started by /init)</pre>
+<p>That is the whole system: about twenty processes and 55 MB of RAM. If a
+supervised service dies, runsv starts it again. If a login session ends,
+flxconsole starts a new getty on that console.</p>
+
+<h3>Filesystem layout</h3>
+<table>
+<tr><th>path</th><th>contents</th></tr>
+<tr><td><code>/init</code></td><td>the boot script, process 1 until it starts runsvdir</td></tr>
+<tr><td><code>/bin</code>, <code>/sbin</code></td><td>essential commands: the NetBSD tools, sh, mksh, runit, mdevd, e2fsprogs, the flx* system scripts</td></tr>
+<tr><td><code>/lib</code></td><td>the musl library and loader (<code>ld-musl-x86_64.so.1</code>), kernel modules in <code>/lib/modules</code>, firmware in <code>/lib/firmware</code></td></tr>
+<tr><td><code>/usr/bin</code>, <code>/usr/lib</code></td><td>everything else: programs and shared libraries from packages</td></tr>
+<tr><td><code>/usr/include</code></td><td>C headers for musl and Linux (used by cc)</td></tr>
+<tr><td><code>/usr/share</code></td><td>manual pages, time zones, fonts, terminal descriptions, data</td></tr>
+<tr><td><code>/etc</code></td><td>configuration, all plain text</td></tr>
+<tr><td><code>/etc/svc</code></td><td>available but disabled services</td></tr>
+<tr><td><code>/var/service</code></td><td>enabled services (directories or links into /etc/svc)</td></tr>
+<tr><td><code>/var/lib/xpkg</code></td><td>the package database</td></tr>
+<tr><td><code>/var/cache/xpkg</code></td><td>downloaded package archives</td></tr>
+<tr><td><code>/var/log</code></td><td>log files: mdevd.log, ntpd.log, sshd.log and others</td></tr>
+<tr><td><code>/run</code></td><td>tmpfs: sockets and pid files, empty at every boot</td></tr>
+<tr><td><code>/tmp</code></td><td>tmpfs: temporary files, empty at every boot</td></tr>
+<tr><td><code>/home</code></td><td>user directories, on their own partition</td></tr>
+<tr><td><code>/root</code></td><td>root's home directory</td></tr>
+<tr><td><code>/media/flx</code></td><td>the live medium, read-only, when one is attached</td></tr>
+<tr><td><code>/boot</code></td><td>a copy of the kernel; the boot loader reads the one on the ESP</td></tr>
+</table>
+
+<h3>How a program runs</h3>
+<p>Every dynamically linked program names <code>/lib/ld-musl-x86_64.so.1</code>
+as its interpreter. When the kernel starts the program it first loads that
+file, which is musl itself: in musl the C library and the dynamic loader are
+the same file. The loader then finds the other libraries the program needs in
+the directories listed in <code>/etc/ld-musl-x86_64.path</code>:</p>
+<pre>/lib
+/usr/local/lib
+/usr/lib</pre>
+<p>There is no ldconfig and no library cache: a library is found as soon as
+it is in one of these directories. <code>ldd PROGRAM</code> shows what a
+program loads.</p>
+
+<h3>Configuration</h3>
+<p>Everything is configured with text files in /etc, edited with any editor.
+There is no registry, no configuration daemon and no binary log. Changes take
+effect when the program reads the file again: restart the service with
+<code>sv restart NAME</code>, or log in again for /etc/profile. xsetup only
+writes these files; anything it does can also be done by hand.</p>
+<table>
+<tr><th>file</th><th>what it sets</th></tr>
+<tr><td>/etc/hostname, /etc/hosts</td><td>host name</td></tr>
+<tr><td>/etc/passwd, /etc/group, /etc/shadow</td><td>users, groups, password hashes</td></tr>
+<tr><td>/etc/doas.conf</td><td>who may run commands as root</td></tr>
+<tr><td>/etc/profile</td><td>environment for login shells: PATH, TZ, prompt, SVDIR</td></tr>
+<tr><td>/etc/dhcpcd.conf, /etc/resolv.conf</td><td>network addresses and name servers</td></tr>
+<tr><td>/etc/wpa_supplicant/flxwifi.conf</td><td>saved Wi-Fi networks</td></tr>
+<tr><td>/etc/mdev.conf</td><td>device permissions and hotplug actions</td></tr>
+<tr><td>/etc/fstab, /etc/flx-disk</td><td>filesystems and the partitions of this installation</td></tr>
+<tr><td>/etc/localtime, /etc/TZ</td><td>time zone</td></tr>
+<tr><td>/etc/xpkg/</td><td>package repositories and trusted keys</td></tr>
+<tr><td>/etc/ssh/</td><td>SSH client and server</td></tr>
+<tr><td>/etc/os-release</td><td>the release name and version</td></tr>
+</table>
+
+<h3>Where software comes from</h3>
+<p>The ISO contains the base system. Everything else comes from the package
+repository through xpkg: X, window managers, browsers, media players,
+compilers and libraries. The base system itself is also made of packages from
+the same repository, plus the files in the src repository (the boot script,
+configuration and the flx* scripts). An installed system can be brought up to
+date in two ways: <code>xpkg upgrade</code> for packages, and
+<code>flxupgrade</code> from a newer ISO for the base files.</p>
+
+<h3>Design rules</h3>
+<ul>
+<li><b>Small.</b> One tool for each job, and no daemon that is not needed. A
+console system after boot uses about 55 MB of RAM.</li>
+<li><b>Readable.</b> The boot script, the installer and the system tools are
+POSIX shell scripts with comments. When something goes wrong you can read
+exactly what happened.</li>
+<li><b>Fail closed.</b> When a check cannot be made, the answer is no: xpkg
+refuses an unsigned repository, flxconsole starts no shell when login is
+missing, the installer does not erase a disk that is in use.</li>
+<li><b>Verified.</b> Packages are signed, archives are checked against the
+signed index, and every release is installed and booted in automated tests
+before it is published.</li>
+<li><b>No GNU.</b> Checked mechanically on every file of every release and
+package.</li>
+</ul>
+
+<!-- ===================================================================== -->
+<h2 id="get">3. Getting FreeLinX</h2>
 <p>Releases are on <a href="https://github.com/FreeLinX/FreeLinX-base/releases">GitHub</a>.
 Each release has the ISO image and a sha256 file.</p>
 <pre>curl -LO https://github.com/FreeLinX/FreeLinX-base/releases/latest/download/freelinx-base-x86_64.iso
@@ -160,7 +316,7 @@ qemu-system-x86_64 -enable-kvm -cpu host -m 4096 -smp 2 -machine q35 \
 10 to 20 times slower.</p>
 
 <!-- ===================================================================== -->
-<h2 id="live">3. The live system</h2>
+<h2 id="live">4. The live system</h2>
 <p>When the ISO boots, Limine shows a menu with two entries, "FreeLinX 1.3.1
 base (installer: xsetup)" and "Rescue shell". The first one starts after five
 seconds. The kernel messages are shown, then the screen is cleared and the
@@ -175,10 +331,10 @@ package like Firefox does not fit in a live session on a small machine;
 install to disk first.</p>
 <p>The medium itself is mounted read-only at <code>/media/flx</code>.</p>
 <p>Network: on wired interfaces dhcpcd starts at boot. Wi-Fi is configured
-with <code>flxwifi</code> (see <a href="#net">section 9</a>).</p>
+with <code>flxwifi</code> (see <a href="#net">section 10</a>).</p>
 
 <!-- ===================================================================== -->
-<h2 id="install">4. Installing with xsetup</h2>
+<h2 id="install">5. Installing with xsetup</h2>
 <p>Run <code>xsetup</code> as root. It runs thirteen steps in order, each one
 asking its questions and writing its files. A finished step is recorded in
 <code>/etc/xsetup.state</code>; if the installer stops, running
@@ -290,7 +446,7 @@ partition.</li>
 disk.</p>
 
 <!-- ===================================================================== -->
-<h2 id="disk">5. Disk layout and boot configuration</h2>
+<h2 id="disk">6. Disk layout and boot configuration</h2>
 <table>
 <tr><th>#</th><th>partition</th><th>filesystem, label</th><th>size</th><th>mounted at</th></tr>
 <tr><td>1</td><td>EFI system</td><td>FAT32, FLX_BOOT</td><td>1 GiB</td><td>not mounted</td></tr>
@@ -338,7 +494,7 @@ not report it. <code>console=tty0</code> is last, so <code>/dev/console</code>
 is the screen; kernel messages also go to the serial port.</p>
 
 <!-- ===================================================================== -->
-<h2 id="boot">6. The boot process</h2>
+<h2 id="boot">7. The boot process</h2>
 
 <h3>Live medium</h3>
 <pre>Limine --> kernel + initramfs --> flxlive --> overlay root --> /init --> runsvdir</pre>
@@ -413,7 +569,7 @@ kernel's emergency sync, unmount and power-off or reboot through
 <code>/proc/sysrq-trigger</code>.</p>
 
 <!-- ===================================================================== -->
-<h2 id="services">7. Services, devices and consoles</h2>
+<h2 id="services">8. Services, devices and consoles</h2>
 
 <h3>runit</h3>
 <p>Each directory in <code>/var/service</code> is a service supervised by
@@ -465,7 +621,7 @@ the rescue shell.</li>
 line. The prompt shows user, host and the current directory.</p>
 
 <!-- ===================================================================== -->
-<h2 id="users">8. Users and privileges</h2>
+<h2 id="users">9. Users and privileges</h2>
 <h3>doas</h3>
 <p>Members of the group wheel can run commands as root with doas, after
 entering their own password (remembered for a while with
@@ -492,7 +648,7 @@ it gives a root shell with the disk mounted read-write; run
 <code>passwd root</code>.</p>
 
 <!-- ===================================================================== -->
-<h2 id="net">9. Networking</h2>
+<h2 id="net">10. Networking</h2>
 <h3>Wired</h3>
 <p>dhcpcd runs from /init on eth0. Static settings made with setup-interfaces
 are kept in a block in <code>/etc/dhcpcd.conf</code>:</p>
@@ -524,7 +680,7 @@ cards is included, and the regulatory database is installed.</p>
 <code>/etc/ssh/sshd_config</code>; host keys are created on first start.</p>
 
 <!-- ===================================================================== -->
-<h2 id="xpkg">10. Packages and xpkg</h2>
+<h2 id="xpkg">11. Packages and xpkg</h2>
 <h3>Usage</h3>
 <pre>xpkg update                 # download the repository index
 xpkg search WORD            # search names and descriptions
@@ -596,7 +752,7 @@ new version of a file you have changed, your file is kept and the new one is
 written next to it as <code>FILE.xpkgnew</code>.</p>
 
 <!-- ===================================================================== -->
-<h2 id="x11">11. X and Openbox</h2>
+<h2 id="x11">12. X and Openbox</h2>
 <pre>xpkg install xorg xinit openbox
 startx</pre>
 <p>The <code>xorg</code> package depends on the X server, the libinput and
@@ -635,7 +791,7 @@ st or another program that uses fontconfig takes a few seconds while the font
 cache is built.</p>
 
 <!-- ===================================================================== -->
-<h2 id="nognu">12. The no-GNU rule</h2>
+<h2 id="nognu">13. The no-GNU rule</h2>
 <p>Every image and every package is checked by
 <code>check-nognu.sh</code> before release. It examines every ELF file and
 fails if any of these is true:</p>
@@ -655,7 +811,7 @@ address.</li>
 statically leaves no GCC marker and no library dependency.</p>
 
 <!-- ===================================================================== -->
-<h2 id="upgrade">13. Upgrading</h2>
+<h2 id="upgrade">14. Upgrading</h2>
 <h3>Packages</h3>
 <pre>doas xpkg upgrade</pre>
 <p>This updates everything installed from the repository, including the
@@ -684,7 +840,7 @@ FLX_SYS. flxupgrade converts such a disk: FLX_SYS becomes the root partition
 RAM image is removed from the ESP.</p>
 
 <!-- ===================================================================== -->
-<h2 id="build">14. Building from source</h2>
+<h2 id="build">15. Building from source</h2>
 <p>The ISO can be built on any x86_64 Linux system without root.</p>
 
 <h3>Host packages</h3>
@@ -783,7 +939,7 @@ musl toolchain, then signed and published with
 archive first.</p>
 
 <!-- ===================================================================== -->
-<h2 id="tests">15. Tests</h2>
+<h2 id="tests">16. Tests</h2>
 <table>
 <tr><th>suite</th><th>checks</th></tr>
 <tr><td><code>test-ui.sh</code></td><td>the installer's menus, prompts, password handling and input rules (host names, user names)</td></tr>
@@ -801,11 +957,11 @@ are run on BIOS and UEFI before each release, on the exact ISO that is
 published.</p>
 
 <!-- ===================================================================== -->
-<h2 id="cmds">16. Command reference</h2>
+<h2 id="cmds">17. Command reference</h2>
 <p>Commands specific to FreeLinX. Standard commands have manual pages.</p>
 <dl>
 <dt>xsetup [--list | --status | --reset STEP | -h] [STEP ...]</dt>
-<dd>The installer. See <a href="#install">section 4</a>.</dd>
+<dd>The installer. See <a href="#install">section 5</a>.</dd>
 
 <dt>xpkg [options] COMMAND [ARGS]</dt>
 <dd>The package manager. Commands: search, show, install, reinstall, remove,
@@ -813,11 +969,11 @@ autoremove, update, upgrade, outdated, list, info, files, owns, verify, clean,
 repo list, repo add URL, repo remove URL. Options: -n/--dry-run,
 -f/--force (override conflict, dependency and downgrade checks), -q, -v,
 -y (accepted, xpkg never prompts), --root DIR, --allow-unsigned,
---no-scripts, -V. See <a href="#xpkg">section 10</a>.</dd>
+--no-scripts, -V. See <a href="#xpkg">section 11</a>.</dd>
 
 <dt>flxupgrade [-y] [DISK]</dt>
 <dd>Upgrade an installed system from a newer live ISO. -y does not ask for
-confirmation. See <a href="#upgrade">section 13</a>.</dd>
+confirmation. See <a href="#upgrade">section 14</a>.</dd>
 
 <dt>passwd [USER]</dt>
 <dd>Set a password. Without USER, your own (non-root users go through doas).
@@ -840,7 +996,7 @@ writing it.</dd>
 
 <dt>flxconsole</dt>
 <dd>Run by the shell service. Opens shells (live) or logins (installed) on
-ttyS0 and tty1 to tty3. See <a href="#services">section 7</a>.</dd>
+ttyS0 and tty1 to tty3. See <a href="#services">section 8</a>.</dd>
 
 <dt>flxautomount</dt>
 <dd>Called by mdevd for disks, partitions and optical drives; mounts
@@ -862,14 +1018,14 @@ removable media.</dd>
 
 <dt>reboot, poweroff</dt>
 <dd>Stop services, unmount filesystems and restart or power off. See
-<a href="#boot">section 6</a>.</dd>
+<a href="#boot">section 7</a>.</dd>
 
 <dt>startx [CLIENT] [-- SERVER OPTIONS]</dt>
-<dd>Start X (package xinit). See <a href="#x11">section 11</a>.</dd>
+<dd>Start X (package xinit). See <a href="#x11">section 12</a>.</dd>
 </dl>
 
 <!-- ===================================================================== -->
-<h2 id="trouble">17. Troubleshooting</h2>
+<h2 id="trouble">18. Troubleshooting</h2>
 <dl>
 <dt>"No bootable device" when booting the disk in QEMU</dt>
 <dd>The disk has no system on it. Boot the ISO, run xsetup and finish the
@@ -926,7 +1082,7 @@ reboot.</dd>
 </dl>
 
 <!-- ===================================================================== -->
-<h2 id="repos">18. Repositories</h2>
+<h2 id="repos">19. Repositories</h2>
 <table>
 <tr><td><a href="https://github.com/FreeLinX/FreeLinX-base">FreeLinX-base</a></td><td>build scripts, xsetup, flxlive, tests, base releases</td></tr>
 <tr><td><a href="https://github.com/FreeLinX/src">src</a></td><td>root filesystem: /init, system scripts, NetBSD tools, configuration, manual pages</td></tr>
@@ -942,23 +1098,16 @@ reboot.</dd>
 </table>
 
 <!-- ===================================================================== -->
-<h2 id="bugs">19. Known problems</h2>
-<ul>
-<li>FreeLinX has been tested in QEMU/KVM (BIOS and UEFI) but not yet on real
-hardware.</li>
-<li>Secure Boot is not supported.</li>
-<li>eMMC disks cannot be the installation target: the eMMC driver is a kernel
-module, and the installed system boots without an initramfs.</li>
-<li>Wi-Fi has been tested only with a simulated access point.</li>
-<li>The setup-keymap step records the layout but cannot apply it to the text
-console.</li>
-<li>nvi crashes on start (vi is vim). lemonbar and the imlib2 demo programs
-crash instead of exiting when no X display is available.</li>
-</ul>
-<p>Report problems at
-<a href="https://github.com/FreeLinX/FreeLinX/issues">github.com/FreeLinX/FreeLinX/issues</a>.
-Include the release version, the hardware or QEMU command, and the output of
-<code>dmesg | tail -50</code>.</p>
+<h2 id="support">20. Supporting FreeLinX</h2>
+<p>FreeLinX is developed by volunteers. Donations pay for build machines,
+test hardware and hosting.</p>
+<table>
+<tr><td>Buy Me a Coffee</td><td><a href="https://buymeacoffee.com/freelinxfoundation">buymeacoffee.com/freelinxfoundation</a></td></tr>
+<tr><td>Bitcoin</td><td><code>bc1qkp9vt9mv54gv8ze694uhrmlhxnkv9u7jgtu3w3</code></td></tr>
+<tr><td>Ethereum</td><td><code>0x7c4c547aadc3d67d74a6fb602664fa2bc473ed58</code></td></tr>
+</table>
+<p>Bug reports and patches are just as welcome:
+<a href="https://github.com/FreeLinX/FreeLinX/issues">github.com/FreeLinX/FreeLinX/issues</a>.</p>
 
 <p class="foot">FreeLinX base 1.3.1 documentation, October 2026 &middot;
 BSD-2-Clause &middot;
