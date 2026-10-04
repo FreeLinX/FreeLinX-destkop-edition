@@ -9,6 +9,10 @@ It boots to a light Openbox desktop with a Firefox-based browser, installs to
 disk from a graphical installer, and keeps itself up to date with its own
 package manager.
 
+**Documentation:** <https://freelinx.github.io/FreeLinX/> (what FreeLinX is,
+how it works, installing, building from source, command reference).
+**FreeLinX base**, the console edition: <https://github.com/FreeLinX/FreeLinX-base>.
+
 ![FreeLinX desktop with FreeLinX Web](screenshots/browser.png)
 
 ## Download
