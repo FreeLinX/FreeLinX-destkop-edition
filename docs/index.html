@@ -6,41 +6,45 @@
 <title>FreeLinX Documentation</title>
 <meta name="description" content="FreeLinX: an independent Linux distribution with no GNU code. What it is, how it works, how to install, use and build it, and a reference of its commands.">
 <style>
-/* FreeLinX, the way project pages looked in 1997. */
-:root { color-scheme: light; }
-body { margin: 0; padding: 16px; background: #c0c0c0; color: #000; font: 17px/1.5 "Times New Roman", Times, serif; }
-.page { max-width: 900px; margin: 0 auto; background: #fff; padding: 14px 26px 22px;
-        border: 2px solid; border-color: #fff #808080 #808080 #fff; box-shadow: 1px 1px 0 #000; }
-a { color: #0000ee; } a:visited { color: #551a8b; } a:active { color: #ff0000; }
-h1 { font-size: 40px; margin: 6px 0 4px; font-weight: bold; }
-h1 span { color: #cc0000; }
-.new { font-size: 15px; color: #cc0000; font-weight: bold; vertical-align: middle; animation: blink 1s steps(1) infinite; }
-@keyframes blink { 50% { visibility: hidden; } }
-@media (prefers-reduced-motion: reduce) { .new { animation: none; } }
-.lead { font-style: italic; }
-h2 { font-size: 26px; margin: 10px 0 8px; }
-h3 { font-size: 20px; margin: 20px 0 6px; }
-h4 { font-family: "Courier New", Courier, monospace; font-size: 17px; margin: 10px 0 2px; }
-hr { border: 0; border-top: 2px groove #a0a0a0; margin: 22px 0 8px; }
-code, pre, tt, dt { font-family: "Courier New", Courier, monospace; font-size: 15px; }
-pre { background: #f0f0f0; border: 1px solid #808080; padding: 8px 10px; overflow-x: auto; }
-pre.ascii { background: #000; color: #33ff33; border: 2px inset #808080; font-size: 13.5px; line-height: 1.35; }
-table { border-collapse: collapse; margin: 10px 0 14px; display: block; overflow-x: auto; max-width: 100%; }
-th, td { border: 1px solid #808080; padding: 4px 8px; text-align: left; vertical-align: top; }
-th { background: #dcdcdc; }
-.topnav { font-size: 15px; background: #eeeeee; border: 1px solid #808080; padding: 4px 8px; }
-.note { border: 1px dashed #808080; background: #ffffe0; padding: 6px 10px; margin: 12px 0; }
-.note.warn { background: #ffe4e1; }
-.cmd { border-top: 1px dotted #808080; margin: 12px 0 0; padding-top: 4px; }
-.cmd .syn { font-family: "Courier New", Courier, monospace; font-size: 15px; font-weight: bold; }
-dd { margin: 0 0 6px 28px; }
+/* FreeLinX: a dark, early-2000s project page. */
+:root { color-scheme: dark; }
+body { margin: 0; padding: 20px 16px; background: #0b0d10; color: #d6dbe1;
+       font: 16px/1.65 Verdana, Tahoma, "DejaVu Sans", "Segoe UI", sans-serif; }
+.page { max-width: 920px; margin: 0 auto; background: #14171c; padding: 18px 30px 26px;
+        border: 1px solid #2a2f37; border-top: 3px solid #e2611c; border-radius: 4px; }
+a { color: #ff9a4d; } a:visited { color: #c8a2ff; } a:hover { color: #ffc28f; }
+h1 { font-size: 38px; margin: 8px 0 6px; letter-spacing: -0.5px; color: #f2f4f7; }
+h1 span { color: #e2611c; }
+.new { font-size: 12px; font-weight: bold; color: #0b0d10; background: #e2611c; padding: 2px 7px;
+       border-radius: 3px; vertical-align: middle; letter-spacing: 0.5px; }
+.lead { color: #aab3bd; font-size: 17px; }
+h2 { font-size: 24px; margin: 10px 0 8px; color: #f2f4f7; }
+h2::before { content: "// "; color: #e2611c; }
+h3 { font-size: 18.5px; margin: 22px 0 6px; color: #ffb37a; }
+h4 { font-family: "DejaVu Sans Mono", "Courier New", monospace; font-size: 16px; margin: 10px 0 2px; color: #ffb37a; }
+hr { border: 0; border-top: 1px dashed #343a43; margin: 26px 0 10px; }
+code, pre, dt { font-family: "DejaVu Sans Mono", Menlo, Consolas, "Courier New", monospace; font-size: 14px; }
+code { color: #9fe0a8; }
+pre { background: #0d1014; border: 1px solid #2a2f37; padding: 10px 12px; overflow-x: auto; border-radius: 3px; }
+pre code { color: #d6dbe1; }
+pre.ascii { background: #000; color: #39ff6a; border-color: #1f5c2c; font-size: 13px; line-height: 1.35; }
+table { border-collapse: collapse; margin: 10px 0 16px; display: block; overflow-x: auto; max-width: 100%; font-size: 15px; }
+th, td { border: 1px solid #2f353e; padding: 6px 10px; text-align: left; vertical-align: top; }
+th { background: #1c2027; color: #f2f4f7; }
+tr:nth-child(even) td { background: #171b21; }
+.topnav { font-size: 14px; background: #0f1216; border: 1px solid #2a2f37; padding: 6px 10px; border-radius: 3px; color: #6b7480; }
+.note { border-left: 3px solid #e2611c; background: #1d1712; padding: 8px 12px; margin: 12px 0; }
+.note.warn { border-left-color: #ff4d4d; background: #211314; }
+.cmd { border-top: 1px dashed #343a43; margin: 14px 0 0; padding-top: 6px; }
+.cmd .syn { font-family: "DejaVu Sans Mono", "Courier New", monospace; font-size: 14px; color: #9fe0a8; }
+dd { margin: 0 0 6px 26px; color: #c3c9d0; }
 .badges { text-align: center; }
 .b88 { display: inline-block; width: 88px; height: 31px; margin: 3px; font: bold 10px/13px Verdana, Arial, sans-serif;
-       text-align: center; padding-top: 2px; border: 2px solid; border-color: #fff #404040 #404040 #fff; background: #000080; color: #ffff00; }
-.b88:nth-child(2) { background: #800000; color: #fff; } .b88:nth-child(3) { background: #ff6600; color: #000; }
-.b88:nth-child(4) { background: #008080; color: #fff; } .b88:nth-child(5) { background: #404040; color: #00ff00; }
-address { text-align: center; font-size: 14px; }
-@media (max-width: 600px) { body { padding: 6px; } .page { padding: 10px 12px; } h1 { font-size: 30px; } }
+       text-align: center; padding-top: 2px; border: 1px solid #444; background: #000; color: #39ff6a; }
+.b88:nth-child(2) { color: #ff9a4d; border-color: #e2611c; } .b88:nth-child(3) { color: #ff6b6b; }
+.b88:nth-child(4) { color: #6cc4ff; } .b88:nth-child(5) { color: #e9e36b; }
+address { text-align: center; font-size: 13.5px; font-style: normal; color: #7c8591; }
+@media (max-width: 600px) { body { padding: 8px; } .page { padding: 12px 14px; } h1 { font-size: 30px; } }
 </style>
 </head>
 <body>
